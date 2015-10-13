@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class FluidMechanicsController : MonoBehaviour {
+public class FluidMechanicsController : MonoBehaviour
+{
 
     // 1ルーム当たりのスプライトの大きさ.
     const float ROOM_SPRITE_LENGTH = 2.935f;
@@ -86,7 +87,7 @@ public class FluidMechanicsController : MonoBehaviour {
     {
 
         InitData();
-       
+
     }
 
     void Update()
@@ -151,11 +152,31 @@ public class FluidMechanicsController : MonoBehaviour {
             {
 
                 GameObject obj = InstanceRoomObject(X, Y);
-                obj.transform.localPosition = transform.position;
-                obj.transform.localPosition += new Vector3(ROOM_SPRITE_LENGTH * X, ROOM_SPRITE_LENGTH * Y);
+                //obj.transform.position = transform.position;
+
+                Vector3 newPosition = Vector3.zero;
+                if (ROOM_MAX_X % 2 == 0)
+                {
+
+                    newPosition = new Vector3(
+                        (-(ROOM_MAX_X - 1) / 2 + X) * ROOM_SPRITE_LENGTH + transform.position.x - ROOM_SPRITE_LENGTH / 2,
+                        (-(ROOM_MAX_Y - 1) / 2 + Y) * ROOM_SPRITE_LENGTH + transform.position.y - ROOM_SPRITE_LENGTH / 2,
+                        1.0f
+                        );
+                }
+                else
+                {
+                    newPosition = new Vector3(
+                        (-(ROOM_MAX_X - 1) / 2 + X) * ROOM_SPRITE_LENGTH + transform.position.x,
+                        (-(ROOM_MAX_Y - 1) / 2 + Y) * ROOM_SPRITE_LENGTH + transform.position.y,
+                        1.0f
+                        );
+                }
+
+                obj.transform.localPosition = newPosition;
                 obj.transform.SetParent(transform);
                 obj.name = "Room(" + X.ToString() + " , " + Y.ToString() + ")";
-                rooms[Y].Add(obj);            
+                rooms[Y].Add(obj);
 
             }
         }
@@ -172,29 +193,29 @@ public class FluidMechanicsController : MonoBehaviour {
     {
 
         // 上下.
-        for(int i = 0; i <= NX; i++)
+        for (int i = 0; i <= NX; i++)
         {
 
-            velY[i,0] = velY[i,2];
-            velY[i,1] = 0.0f;
-            velX[i,0] = -velX[i,1];
+            velY[i, 0] = velY[i, 2];
+            velY[i, 1] = 0.0f;
+            velX[i, 0] = -velX[i, 1];
 
-            velX[i,NY - 1] = 2.0f - velX[i,NY - 2];//上境界度を1とする(平均値が1となる)の速
-            velY[i,NY] = velY[i,NY - 2];
-            velY[i,NY - 1] = 0.0f;
+            velX[i, NY - 1] = 2.0f - velX[i, NY - 2];//上境界度を1とする(平均値が1となる)の速
+            velY[i, NY] = velY[i, NY - 2];
+            velY[i, NY - 1] = 0.0f;
 
         }
 
         //左右
         for (int j = 0; j <= NY; j++)
         {
-            velX[0,j] = velX[2,j];
-            velX[1,j] = 0.0f;
-            velY[0,j] = -velY[1,j];
+            velX[0, j] = velX[2, j];
+            velX[1, j] = 0.0f;
+            velY[0, j] = -velY[1, j];
 
-            velX[NX,j] = velX[NX - 2,j];
-            velX[NX - 1,j] = 0.0f;
-            velY[NX - 1,j] = -velY[NX - 2,j];
+            velX[NX, j] = velX[NX - 2, j];
+            velX[NX - 1, j] = 0.0f;
+            velY[NX - 1, j] = -velY[NX - 2, j];
         }
 
     }
@@ -206,46 +227,46 @@ public class FluidMechanicsController : MonoBehaviour {
         for (int j = 1; j < NY - 1; j++)
             for (int i = 2; i < NX - 1; i++)
             {
-                velX[i,j] += -deltaT * (prs[i,j] - prs[i - 1,j]) / DX;
+                velX[i, j] += -deltaT * (prs[i, j] - prs[i - 1, j]) / DX;
             }
         for (int j = 2; j < NY - 1; j++)
             for (int i = 1; i < NX - 1; i++)
             {
-                velY[i,j] += -deltaT * (prs[i,j] - prs[i,j - 1]) / DY;
+                velY[i, j] += -deltaT * (prs[i, j] - prs[i, j - 1]) / DY;
             }
 
         //表示のための速度は圧力と同じ位置で
         for (int j = 1; j <= NY - 2; j++)
             for (int i = 1; i <= NX - 2; i++)
             {
-                VelX[i,j] = (velX[i,j] + velX[i + 1,j]) / 2.0f;
-                VelY[i,j] = (velY[i,j] + velY[i,j + 1]) / 2.0f;
+                VelX[i, j] = (velX[i, j] + velX[i + 1, j]) / 2.0f;
+                VelY[i, j] = (velY[i, j] + velY[i, j + 1]) / 2.0f;
             }
 
         //Psi
         for (int j = 0; j < NY - 1; j++)
         {
-            psi[0,j] = 0.0f;
+            psi[0, j] = 0.0f;
             for (int i = 1; i < NX - 1; i++)
-                psi[i,j] = psi[i - 1,j] - DX * (velY[i - 1,j] + velY[i,j]) / 2.0f;
+                psi[i, j] = psi[i - 1, j] - DX * (velY[i - 1, j] + velY[i, j]) / 2.0f;
         }
         //Omega
         for (int i = 1; i <= NX - 1; i++)
             for (int j = 1; j <= NY - 1; j++)
             {
-                omg[i,j] = 0.5f * ((VelY[i + 1,j] - VelY[i - 1,j]) / DX - (VelX[i,j + 1] - VelX[i,j - 1]) / DY);
+                omg[i, j] = 0.5f * ((VelY[i + 1, j] - VelY[i - 1, j]) / DX - (VelX[i, j + 1] - VelX[i, j - 1]) / DY);
             }
 
         //流れ関数，圧力、渦度の最小値，最大値
         for (int i = 1; i < NX; i++)
             for (int j = 1; j < NY; j++)
             {
-                if (prs[i,j] > maxPrs0) maxPrs0 = prs[i,j];
-                if (prs[i,j] < minPrs0) minPrs0 = prs[i,j];
-                if (psi[i,j] > maxPsi0) maxPsi0 = psi[i,j];
-                if (psi[i,j] < minPsi0) minPsi0 = psi[i,j];
-                if (omg[i,j] > maxOmg0) maxOmg0 = omg[i,j];
-                if (omg[i,j] < minOmg0) minOmg0 = omg[i,j];
+                if (prs[i, j] > maxPrs0) maxPrs0 = prs[i, j];
+                if (prs[i, j] < minPrs0) minPrs0 = prs[i, j];
+                if (psi[i, j] > maxPsi0) maxPsi0 = psi[i, j];
+                if (psi[i, j] < minPsi0) minPsi0 = psi[i, j];
+                if (omg[i, j] > maxOmg0) maxOmg0 = omg[i, j];
+                if (omg[i, j] < minOmg0) minOmg0 = omg[i, j];
             }
 
     }
@@ -267,9 +288,9 @@ public class FluidMechanicsController : MonoBehaviour {
         for (int j = 1; j < NY - 1; j++)
             for (int i = 1; i < NX - 1; i++)
             {
-                float a = (velX[i + 1,j] - velX[i,j]) / DX;
-                float b = (velY[i,j + 1] - velY[i,j]) / DY;
-                D[i,j] = A3 * (a + b) / deltaT;
+                float a = (velX[i + 1, j] - velX[i, j]) / DX;
+                float b = (velY[i, j + 1] - velY[i, j]) / DY;
+                D[i, j] = A3 * (a + b) / deltaT;
             }
 
         //反復法
@@ -281,22 +302,22 @@ public class FluidMechanicsController : MonoBehaviour {
             //圧力境界値
             for (int j = 1; j < NY; j++)
             {
-                prs[0,j] = prs[1,j] - 2.0f * velX[0,j] / (DX * Re);//左端
-                prs[NX - 1,j] = prs[NX - 2,j] + 2.0f * velX[NX,j] / (DX * Re);//右端
+                prs[0, j] = prs[1, j] - 2.0f * velX[0, j] / (DX * Re);//左端
+                prs[NX - 1, j] = prs[NX - 2, j] + 2.0f * velX[NX, j] / (DX * Re);//右端
             }
             for (int i = 1; i < NX; i++)
             {
-                prs[i,0] = prs[i,1] - 2.0f * velY[i,0] / (DY * Re);//下端
-                prs[i,NY - 1] = prs[i,NY - 2] + 2.0f * velY[i,NY] / (DY * Re);//上端
+                prs[i, 0] = prs[i, 1] - 2.0f * velY[i, 0] / (DY * Re);//下端
+                prs[i, NY - 1] = prs[i, NY - 2] + 2.0f * velY[i, NY] / (DY * Re);//上端
             }
 
             for (int j = 1; j < NY - 1; j++)
                 for (int i = 1; i < NX - 1; i++)
                 {
-                    float pp = A1 * (prs[i + 1,j] + prs[i - 1,j]) + A2 * (prs[i,j + 1] + prs[i,j - 1]) - D[i,j];
-                    float error = Mathf.Abs(pp - prs[i,j]);
+                    float pp = A1 * (prs[i + 1, j] + prs[i - 1, j]) + A2 * (prs[i, j + 1] + prs[i, j - 1]) - D[i, j];
+                    float error = Mathf.Abs(pp - prs[i, j]);
                     if (error > maxError) maxError = error;
-                    prs[i,j] = pp;//更新 
+                    prs[i, j] = pp;//更新 
                 }
             if (maxError < tolerance) break;
 
@@ -314,7 +335,7 @@ public class FluidMechanicsController : MonoBehaviour {
         //x方向速度定義点における速度
         for (int i = 1; i < NX; i++)
             for (int j = 1; j < NY; j++)
-                vel[i,j] = (velY[i - 1,j] + velY[i,j] + velY[i - 1,j + 1] + velY[i,j + 1]) / 4.0f;
+                vel[i, j] = (velY[i - 1, j] + velY[i, j] + velY[i - 1, j + 1] + velY[i, j + 1]) / 4.0f;
 
         methodCIP(velX, velXgx, velXgy, velX, vel);
 
@@ -322,12 +343,12 @@ public class FluidMechanicsController : MonoBehaviour {
         //y方向速度定義点における速度
         for (int i = 1; i < NX; i++)
             for (int j = 1; j < NY; j++)
-                vel[i,j] = (velX[i,j] + velX[i,j - 1] + velX[i + 1,j - 1] + velX[i + 1,j]) / 4.0f;
+                vel[i, j] = (velX[i, j] + velX[i, j - 1] + velX[i + 1, j - 1] + velX[i + 1, j]) / 4.0f;
 
         methodCIP(velY, velYgx, velYgy, vel, velY);
     }
 
-    void methodCIP(float[,] f, float[,] gx,float[,] gy,float[,] vx, float[,] vy)
+    void methodCIP(float[,] f, float[,] gx, float[,] gy, float[,] vx, float[,] vy)
     {
         float[,] newF = new float[NY + 1, NX + 1];//関数
         float[,] newGx = new float[NY + 1, NX + 1];//x方向微分
@@ -339,11 +360,11 @@ public class FluidMechanicsController : MonoBehaviour {
         for (int i = 1; i < NX; i++)
             for (int j = 1; j < NY; j++)
             {
-                if (vx[i,j] >= 0.0) sx = 1.0f; else sx = -1.0f;
-                if (vy[i,j] >= 0.0) sy = 1.0f; else sy = -1.0f;
+                if (vx[i, j] >= 0.0) sx = 1.0f; else sx = -1.0f;
+                if (vy[i, j] >= 0.0) sy = 1.0f; else sy = -1.0f;
 
-                x = -vx[i,j] * deltaT;
-                y = -vy[i,j] * deltaT;
+                x = -vx[i, j] * deltaT;
+                y = -vy[i, j] * deltaT;
                 ip = (int)(i - sx);//上流点
                 jp = (int)(j - sy);
                 dx = sx * DX;
@@ -353,34 +374,34 @@ public class FluidMechanicsController : MonoBehaviour {
                 dx3 = dx2 * dx;
                 dy3 = dy2 * dy;
 
-                c30 = ((gx[ip,j] + gx[i,j]) * dx - 2.0f * (f[i,j] - f[ip,j])) / dx3;
-                c20 = (3.0f * (f[ip,j] - f[i,j]) + (gx[i,j] + 2.0f * gx[i,j]) * dx) / dx2;
-                c03 = ((gy[i,jp] + gy[i,j]) * dy - 2.0f * (f[i,j] - f[i,jp])) / dy3;
-                c02 = (3.0f * (f[i,jp] - f[i,j]) + (gy[i,jp] + 2.0f * gy[i,j]) * dy) / dy2;
-                a = f[i,j] - f[i,jp] - f[ip,j] + f[ip,jp];
-                b = gy[ip,j] - gy[i,j];
+                c30 = ((gx[ip, j] + gx[i, j]) * dx - 2.0f * (f[i, j] - f[ip, j])) / dx3;
+                c20 = (3.0f * (f[ip, j] - f[i, j]) + (gx[i, j] + 2.0f * gx[i, j]) * dx) / dx2;
+                c03 = ((gy[i, jp] + gy[i, j]) * dy - 2.0f * (f[i, j] - f[i, jp])) / dy3;
+                c02 = (3.0f * (f[i, jp] - f[i, j]) + (gy[i, jp] + 2.0f * gy[i, j]) * dy) / dy2;
+                a = f[i, j] - f[i, jp] - f[ip, j] + f[ip, jp];
+                b = gy[ip, j] - gy[i, j];
                 c12 = (-a - b * dy) / (dx * dy2);
-                c21 = (-a - (gx[i,jp] - gx[i,j]) * dx) / (dx2 * dy);
+                c21 = (-a - (gx[i, jp] - gx[i, j]) * dx) / (dx2 * dy);
                 c11 = -b / dx + c21 * dx;
 
-                newF[i,j] = f[i,j] + ((c30 * x + c21 * y + c20) * x + c11 * y + gx[i,j]) * x
-                           + ((c03 * y + c12 * x + c02) * y + gy[i,j]) * y;
+                newF[i, j] = f[i, j] + ((c30 * x + c21 * y + c20) * x + c11 * y + gx[i, j]) * x
+                           + ((c03 * y + c12 * x + c02) * y + gy[i, j]) * y;
 
-                newGx[i,j] = gx[i,j] + (3.0f * c30 * x + 2.0f * (c21 * y + c20)) * x + (c12 * y + c11) * y;
-                newGy[i,j] = gy[i,j] + (3.0f * c03 * y + 2.0f * (c12 * x + c02)) * y + (c21 * x + c11) * x;
+                newGx[i, j] = gx[i, j] + (3.0f * c30 * x + 2.0f * (c21 * y + c20)) * x + (c12 * y + c11) * y;
+                newGy[i, j] = gy[i, j] + (3.0f * c03 * y + 2.0f * (c12 * x + c02)) * y + (c21 * x + c11) * x;
 
                 //粘性項に中央差分
-                newF[i,j] += deltaT * ((f[i - 1,j] + f[i + 1,j] - 2.0f * f[i,j]) / dx2
-                           + (f[i,j - 1] + f[i,j + 1] - 2.0f * f[i,j]) / dy2) / Re;
+                newF[i, j] += deltaT * ((f[i - 1, j] + f[i + 1, j] - 2.0f * f[i, j]) / dx2
+                           + (f[i, j - 1] + f[i, j + 1] - 2.0f * f[i, j]) / dy2) / Re;
             }
 
         //更新
         for (int j = 1; j < NY; j++)
             for (int i = 1; i < NX; i++)
             {
-                f[i,j] = newF[i,j];
-                gx[i,j] = newGx[i,j];
-                gy[i,j] = newGy[i,j];
+                f[i, j] = newF[i, j];
+                gx[i, j] = newGx[i, j];
+                gy[i, j] = newGy[i, j];
             }
 
 
@@ -388,10 +409,10 @@ public class FluidMechanicsController : MonoBehaviour {
 
     #endregion
 
-    private GameObject InstanceRoomObject(int X,int Y)
+    private GameObject InstanceRoomObject(int X, int Y)
     {
 
-       // Debug.Log(X.ToString() + "," + Y.ToString());
+        // Debug.Log(X.ToString() + "," + Y.ToString());
 
         // 壁なら.
         if (Y == 0 || X == 0 || Y == ROOM_MAX_Y - 1 || X == ROOM_MAX_X - 1)
@@ -405,10 +426,10 @@ public class FluidMechanicsController : MonoBehaviour {
         return Instantiate(roomPrefab);
     }
 
-	private void DrawVelocity()
+    private void DrawVelocity()
     {
 
-        for(int Y = 0; Y < ROOM_MAX_Y; Y++)
+        for (int Y = 0; Y < ROOM_MAX_Y; Y++)
         {
             for (int X = 0; X < ROOM_MAX_X; X++)
             {
