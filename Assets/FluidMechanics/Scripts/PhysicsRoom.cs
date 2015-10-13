@@ -18,7 +18,8 @@ public class PhysicsRoom : MonoBehaviour {
         
         if(mag < 10.0f)
         {
-            arrowSprite.transform.localScale = new Vector2(1.0f * mag * scale, 1.0f);
+            float newScale = Mathf.Clamp(mag * scale, 0.1f, 3.6f);
+            arrowSprite.transform.localScale = new Vector2(newScale, 1.0f);
         }
 
         arrowSprite.transform.Rotate(new Vector3(0.0f, 0.0f, 1.0f), theta);

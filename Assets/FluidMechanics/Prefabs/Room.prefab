@@ -188,7 +188,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0}
   presser: 0
   arrowSprite: {fileID: 124754}
-  scale: 1000
+  scale: 100
   isWall: 0
 --- !u!212 &21237016
 SpriteRenderer:
@@ -371,7 +371,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: scale
-      value: 1000
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
