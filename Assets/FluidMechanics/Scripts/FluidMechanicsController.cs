@@ -94,6 +94,12 @@ public class FluidMechanicsController : MonoBehaviour
     void Update()
     {
 
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            DebugLog();
+        }  
+
+
         // step1
         // 境界条件
         Calculate_Boundarycondition();
@@ -482,7 +488,6 @@ public class FluidMechanicsController : MonoBehaviour
 
                 if (X == 13 && Y == 8)
                 {
-                    Debug.Log(VelX[X,Y + 1]);
                     //Debug.Log(str);
                 }
 
@@ -515,5 +520,23 @@ public class FluidMechanicsController : MonoBehaviour
         }
     }
     #endregion
+
+    void DebugLog()
+    {
+
+        string str = "";
+        for (int y = 0; y < NY + 1; y++)
+        {
+            for (int x = 0; x < NX + 1; x++)
+            {
+
+                str += "(" + VelX[x , y].ToString("F5") + ") ";
+
+            }
+            str += "\n";
+        }
+
+        Debug.Log(str);
+    }
 
 }
