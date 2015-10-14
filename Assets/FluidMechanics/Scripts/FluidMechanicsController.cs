@@ -112,6 +112,7 @@ public class FluidMechanicsController : MonoBehaviour
 
         // 描画更新.
         DrawVelocity();
+
     }
 
     #endregion
@@ -126,10 +127,12 @@ public class FluidMechanicsController : MonoBehaviour
         // 部屋のリストオブジェクトを初期化.
         rooms = new List<List<GameObject>>();
 
-        NX = ROOM_MAX_X + 2;
-        NY = ROOM_MAX_Y + 2;
+        // 速度点は(部屋の数+1)個存在する.
+        NX = ROOM_MAX_X + 1;
+        NY = ROOM_MAX_Y + 1;
 
         // 配列の２次元化.
+        /*
         prs = new float[NY + 1, NX + 1];
         psi = new float[NY + 1, NX + 1];
         omg = new float[NY + 1, NX + 1];
@@ -141,6 +144,33 @@ public class FluidMechanicsController : MonoBehaviour
         velXgy = new float[NY + 1, NX + 1];
         velYgx = new float[NY + 1, NX + 1];
         velYgy = new float[NY + 1, NX + 1];
+        */
+
+        /*
+        prs = new float[NY , NX];
+        psi = new float[NY , NX];
+        omg = new float[NY , NX];
+        VelX = new float[NY, NX];
+        VelY = new float[NY, NX];
+        velX = new float[NY, NX];
+        velY = new float[NY, NX];
+        velXgx = new float[NY, NX];
+        velXgy = new float[NY, NX];
+        velYgx = new float[NY, NX];
+        velYgy = new float[NY, NX];
+        */
+
+        prs = new float[NX + 1, NY + 1];
+        psi = new float[NX + 1, NY + 1];
+        omg = new float[NX + 1, NY + 1];
+        VelX = new float[NX + 1, NY + 1];
+        VelY = new float[NX + 1, NY + 1];
+        velX = new float[NX + 1, NY + 1];
+        velY = new float[NX + 1, NY + 1];
+        velXgx = new float[NX + 1, NY + 1];
+        velXgy = new float[NX + 1, NY + 1];
+        velYgx = new float[NX + 1, NY + 1];
+        velYgy = new float[NX + 1, NY + 1];
 
         // 部屋を生成.
         for (int Y = 0; Y < ROOM_MAX_Y; Y++)
@@ -196,12 +226,14 @@ public class FluidMechanicsController : MonoBehaviour
         for (int i = 0; i <= NX; i++)
         {
 
+            // ↓についての境界条件
             velY[i, 0] = velY[i, 2];
             velY[i, 1] = 0.0f;
-            velX[i, 0] = -velX[i, 1];
+            velX[i, 0] = velX[i, 1];
 
+            // ↑についての境界条件
             velX[i, NY - 1] = 2.0f - velX[i, NY - 2];//上境界度を1とする(平均値が1となる)の速
-            velY[i, NY] = velY[i, NY - 2];
+            velY[i, NY] = -velY[i, NY - 2];
             velY[i, NY - 1] = 0.0f;
 
         }
@@ -284,7 +316,7 @@ public class FluidMechanicsController : MonoBehaviour
         float A3 = 0.25f * (DX * DX) * (DY * DY) / ((DX * DX) + (DY * DY));
 
         // ポアソン方程式の右辺.
-        float[,] D = new float[NY, NX];
+        float[,] D = new float[NX + 1, NY + 1];
         for (int j = 1; j < NY - 1; j++)
             for (int i = 1; i < NX - 1; i++)
             {
@@ -330,7 +362,7 @@ public class FluidMechanicsController : MonoBehaviour
     private void Calculate_CIP()
     {
 
-        float[,] vel = new float[NY, NX];
+        float[,] vel = new float[NX + 1, NY + 1];
 
         //x方向速度定義点における速度
         for (int i = 1; i < NX; i++)
@@ -350,9 +382,9 @@ public class FluidMechanicsController : MonoBehaviour
 
     void methodCIP(float[,] f, float[,] gx, float[,] gy, float[,] vx, float[,] vy)
     {
-        float[,] newF = new float[NY + 1, NX + 1];//関数
-        float[,] newGx = new float[NY + 1, NX + 1];//x方向微分
-        float[,] newGy = new float[NY + 1, NX + 1];//y方向微分
+        float[,] newF = new float[NX + 1, NY + 1];//関数
+        float[,] newGx = new float[NX + 1, NY + 1];//x方向微分
+        float[,] newGy = new float[NX + 1, NY + 1];//y方向微分
 
         float c11, c12, c21, c02, c30, c20, c03, a, b, sx, sy, x, y, dx, dy, dx2, dy2, dx3, dy3;
 
@@ -437,12 +469,47 @@ public class FluidMechanicsController : MonoBehaviour
 
                 PhysicsRoom currentRoom = rooms[Y][X].GetComponent<PhysicsRoom>();
 
+                float left = VelX[X, Y];
+                float right = VelX[X + 1, Y];
+                float down = VelY[X, Y];
+                float up = VelX[X, Y + 1];
+               
+                string str = "(X,Y) = (" + X.ToString() + " , " + Y.ToString() + ")\n";
+                str += "Left  : VelX[" + X.ToString() + "][" + Y.ToString() + "] = " + VelX[X, Y] + "\n";
+                str += "Right : VelX[" + X.ToString() + " + 1][" + Y.ToString() + "] = " + VelX[X + 1, Y] + "\n";
+                str += "Up    : VelY[" + X.ToString() + "][" + Y.ToString() + "] = " + VelX[X, Y] + "\n";
+                str += "Down  : VelY[" + X.ToString() + "][" + Y.ToString() + " + 1] = " + VelX[X, Y + 1] + "\n";
+
+                if (X == 13 && Y == 8)
+                {
+                    Debug.Log(VelX[X,Y + 1]);
+                    //Debug.Log(str);
+                }
+
+                //Debug.Log(str);
+
+                currentRoom.UpdateVelocity(right, left, down, up);
+
+                /*
                 if (currentRoom.isWall == false)
                 {
 
-                    currentRoom.UpdateVelocity(VelX[Y, X] + VelX[Y, X + 1], VelY[Y, X] + VelY[Y + 1, X]);
+                    float left = VelX[X, Y];
+                    float right = VelX[X + 1, Y];
+                    float down = VelY[X, Y];
+                    float up = VelX[X, Y + 1];
 
-                }
+                    string str = "(X,Y) = (" + X.ToString() + " , " + Y.ToString() + ")\n";
+                    str += "VelX[" + X.ToString() + "][" + Y.ToString() + "] = " + VelX[X, Y] + "\n";
+                    str += "VelX[" + X.ToString() + " + 1][" + Y.ToString() + "] = " + VelX[X + 1, Y] + "\n";
+                    str += "VelY[" + X.ToString() + "][" + Y.ToString() + "] = " + VelX[X, Y] + "\n";
+                    str += "VelY[" + X.ToString() + "][" + Y.ToString() + " + 1] = " + VelX[X, Y + 1] + "\n";
+
+                    //Debug.Log(str);
+
+                    currentRoom.UpdateVelocity(left,right,up,down);
+
+                }*/
 
             }
         }

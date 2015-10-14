@@ -8,22 +8,45 @@ public class PhysicsRoom : MonoBehaviour {
     public float scale;
     public bool isWall = false;
 
-    public void UpdateVelocity(float VelX,float VelY)
+    public float Left;
+    public float Right;
+    public float Up;
+    public float Down;
+
+    public void UpdateVelocity(float left,float right, float up, float down)
     {
 
-        float mag = Mathf.Sqrt(VelX * VelX + VelY * VelY);
-        float theta = Mathf.Atan2(VelY, VelX);
+        float VelX = (left + right)/2.0f;
+        float VelY = (up + down)/2.0f;
 
-        velocity = new Vector2(VelX, VelY);
-        
-        if(mag < 10.0f)
+        Left = left;
+        Right = right;
+        Up = up;
+        Down = down;
+
+        if (isWall == false)
         {
-            float newScale = Mathf.Clamp(mag * scale, 0.1f, 3.6f);
-            arrowSprite.transform.localScale = new Vector2(newScale, 1.0f);
+
+            velocity = new Vector2(VelX, VelY);
+
+            float mag = velocity.sqrMagnitude;
+            float theta = Mathf.Atan2(velocity.normalized.x , velocity.normalized.y);
+
+            Quaternion currentQuaternion = Quaternion.AngleAxis(theta, new Vector3(0.0f, 0.0f, 1.0f));
+
+            if (mag < 10.0f)
+            {
+                float newScale = Mathf.Clamp(mag * scale, 0.1f, 3.6f);
+                arrowSprite.transform.localScale = new Vector2(newScale, 1.0f);
+            }
+
+            arrowSprite.transform.rotation = currentQuaternion;
+
+            //arrowSprite.transform.Rotate(new Vector3(0.0f, 0.0f, 1.0f), angle);
+
         }
 
-        arrowSprite.transform.Rotate(new Vector3(0.0f, 0.0f, 1.0f), theta);
-        
+
     }
 	
 }

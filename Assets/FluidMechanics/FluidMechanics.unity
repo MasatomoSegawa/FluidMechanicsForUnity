@@ -112,7 +112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b016fb9ee877c1408ecc23398ee6c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ROOM_MAX_X: 10
+  ROOM_MAX_X: 15
   ROOM_MAX_Y: 10
   roomPrefab: {fileID: 155242, guid: 32ce65ab3c8da26438fe1acbf42493d4, type: 2}
   wallPrefab: {fileID: 169944, guid: 4194807bf6a9fba4db123714bf8eb110, type: 2}
@@ -188,7 +188,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: .192156866, g: .301960796, b: .474509805, a: .0196078438}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: .0196078438}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
