@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class FluidMechanicsController : MonoBehaviour
 {
-
+    #region 描画用の変数
     // 1ルーム当たりのスプライトの大きさ.
     const float ROOM_SPRITE_LENGTH = 2.935f;
 
@@ -21,6 +21,7 @@ public class FluidMechanicsController : MonoBehaviour
 
     // Roomの2次元リスト.
     private List<List<GameObject>> rooms;
+    #endregion
 
     #region 数値計算用変数
 
@@ -152,7 +153,6 @@ public class FluidMechanicsController : MonoBehaviour
             {
 
                 GameObject obj = InstanceRoomObject(X, Y);
-                //obj.transform.position = transform.position;
 
                 Vector3 newPosition = Vector3.zero;
                 if (ROOM_MAX_X % 2 == 0)
@@ -409,6 +409,7 @@ public class FluidMechanicsController : MonoBehaviour
 
     #endregion
 
+    #region 描画用の関数
     private GameObject InstanceRoomObject(int X, int Y)
     {
 
@@ -445,6 +446,7 @@ public class FluidMechanicsController : MonoBehaviour
 
             }
         }
-
     }
+    #endregion
+
 }
