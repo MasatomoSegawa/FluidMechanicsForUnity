@@ -87,9 +87,16 @@ public class FluidMechanicsController : MonoBehaviour
     void Start()
     {
 
+		PhysicsRoomLevelImportor physicsRoomLevelImportor = GetComponent<PhysicsRoomLevelImportor> ();
+		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation ("roomLevel");
+	
+		InitPhysicsRooms (roomInformation);
+
         InitData();
 
     }
+
+
 
     void Update()
     {
@@ -124,47 +131,78 @@ public class FluidMechanicsController : MonoBehaviour
 
     #region 流体力学用の関数.
 
+	private void InitPhysicsRooms(RoomInformation roomInformation){
+
+		rooms = roomInformation.physicsRooms;
+
+		this.ROOM_MAX_X = roomInformation.ROOM_MAX_X;
+		this.ROOM_MAX_Y = roomInformation.ROOM_MAX_Y;
+
+		// 速度点は(部屋の数+1)個存在する.
+		NX = ROOM_MAX_X + 1;
+		NY = ROOM_MAX_Y + 1;
+
+	}
+
+	/// <summary>
+	/// PhysicsRoomを構築する.
+	/// </summary>
+	private void InitPhysicsRooms(){
+
+		// 部屋のリストオブジェクトを初期化.
+		rooms = new List<List<GameObject>>();
+
+		// 速度点は(部屋の数+1)個存在する.
+		NX = ROOM_MAX_X + 1;
+		NY = ROOM_MAX_Y + 1;
+
+		// 部屋を生成.
+		for (int Y = 0; Y < ROOM_MAX_Y; Y++)
+		{
+
+			// Y軸初期化.
+			rooms.Add(new List<GameObject>());
+
+			for (int X = 0; X < ROOM_MAX_X; X++)
+			{
+
+				GameObject obj = InstanceRoomObject(X, Y);
+
+				Vector3 newPosition = Vector3.zero;
+				if (ROOM_MAX_X % 2 == 0)
+				{
+
+					newPosition = new Vector3(
+						(-(ROOM_MAX_X - 1) / 2 + X) * ROOM_SPRITE_LENGTH + transform.position.x - ROOM_SPRITE_LENGTH / 2,
+						(-(ROOM_MAX_Y - 1) / 2 + Y) * ROOM_SPRITE_LENGTH + transform.position.y - ROOM_SPRITE_LENGTH / 2,
+						1.0f
+					);
+				}
+				else
+				{
+					newPosition = new Vector3(
+						(-(ROOM_MAX_X - 1) / 2 + X) * ROOM_SPRITE_LENGTH + transform.position.x,
+						(-(ROOM_MAX_Y - 1) / 2 + Y) * ROOM_SPRITE_LENGTH + transform.position.y,
+						1.0f
+					);
+				}
+
+				obj.transform.localPosition = newPosition;
+				obj.transform.SetParent(transform);
+				obj.name = "Room(" + X.ToString() + " , " + Y.ToString() + ")";
+				rooms[Y].Add(obj);
+
+			}
+		}
+
+	}
+
     /// <summary>
     /// 変数などを初期化する.
     /// </summary>
     private void InitData()
     {
-        // 部屋のリストオブジェクトを初期化.
-        rooms = new List<List<GameObject>>();
-
-        // 速度点は(部屋の数+1)個存在する.
-        NX = ROOM_MAX_X + 1;
-        NY = ROOM_MAX_Y + 1;
-
-        // 配列の２次元化.
-        /*
-        prs = new float[NY + 1, NX + 1];
-        psi = new float[NY + 1, NX + 1];
-        omg = new float[NY + 1, NX + 1];
-        VelX = new float[NY + 1, NX + 1];
-        VelY = new float[NY + 1, NX + 1];
-        velX = new float[NY + 1, NX + 1];
-        velY = new float[NY + 1, NX + 1];
-        velXgx = new float[NY + 1, NX + 1];
-        velXgy = new float[NY + 1, NX + 1];
-        velYgx = new float[NY + 1, NX + 1];
-        velYgy = new float[NY + 1, NX + 1];
-        */
-
-        /*
-        prs = new float[NY , NX];
-        psi = new float[NY , NX];
-        omg = new float[NY , NX];
-        VelX = new float[NY, NX];
-        VelY = new float[NY, NX];
-        velX = new float[NY, NX];
-        velY = new float[NY, NX];
-        velXgx = new float[NY, NX];
-        velXgy = new float[NY, NX];
-        velYgx = new float[NY, NX];
-        velYgy = new float[NY, NX];
-        */
-
+	
         prs = new float[NX + 1, NY + 1];
         psi = new float[NX + 1, NY + 1];
         omg = new float[NX + 1, NY + 1];
@@ -177,44 +215,6 @@ public class FluidMechanicsController : MonoBehaviour
         velYgx = new float[NX + 1, NY + 1];
         velYgy = new float[NX + 1, NY + 1];
 
-        // 部屋を生成.
-        for (int Y = 0; Y < ROOM_MAX_Y; Y++)
-        {
-
-            // Y軸初期化.
-            rooms.Add(new List<GameObject>());
-
-            for (int X = 0; X < ROOM_MAX_X; X++)
-            {
-
-                GameObject obj = InstanceRoomObject(X, Y);
-
-                Vector3 newPosition = Vector3.zero;
-                if (ROOM_MAX_X % 2 == 0)
-                {
-
-                    newPosition = new Vector3(
-                        (-(ROOM_MAX_X - 1) / 2 + X) * ROOM_SPRITE_LENGTH + transform.position.x - ROOM_SPRITE_LENGTH / 2,
-                        (-(ROOM_MAX_Y - 1) / 2 + Y) * ROOM_SPRITE_LENGTH + transform.position.y - ROOM_SPRITE_LENGTH / 2,
-                        1.0f
-                        );
-                }
-                else
-                {
-                    newPosition = new Vector3(
-                        (-(ROOM_MAX_X - 1) / 2 + X) * ROOM_SPRITE_LENGTH + transform.position.x,
-                        (-(ROOM_MAX_Y - 1) / 2 + Y) * ROOM_SPRITE_LENGTH + transform.position.y,
-                        1.0f
-                        );
-                }
-
-                obj.transform.localPosition = newPosition;
-                obj.transform.SetParent(transform);
-                obj.name = "Room(" + X.ToString() + " , " + Y.ToString() + ")";
-                rooms[Y].Add(obj);
-
-            }
-        }
     }
 
     #endregion
@@ -471,7 +471,10 @@ public class FluidMechanicsController : MonoBehaviour
         {
             for (int X = 0; X < ROOM_MAX_X; X++)
             {
-                PhysicsRoom currentRoom = rooms[Y][X].GetComponent<PhysicsRoom>();
+				PhysicsRoom currentRoom = rooms[Y][X].GetComponent<PhysicsRoom>();
+
+				currentRoom.UpdateVelocity (VelX [X + 1,ROOM_MAX_Y - Y - 1], VelY [X + 1, ROOM_MAX_Y - Y - 1]);
+
             }
         }
 

@@ -45,6 +45,10 @@ MonoBehaviour:
   arrowSprite: {fileID: 0}
   scale: 0
   isWall: 1
+  Left: 0
+  Right: 0
+  Up: 0
+  Down: 0
 --- !u!212 &21262022
 SpriteRenderer:
   m_ObjectHideFlags: 1

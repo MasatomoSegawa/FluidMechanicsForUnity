@@ -94,6 +94,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 535448922}
   - 114: {fileID: 535448921}
+  - 114: {fileID: 535448923}
   m_Layer: 0
   m_Name: FluidMecanicsController
   m_TagString: Untagged
@@ -112,15 +113,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b016fb9ee877c1408ecc23398ee6c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ROOM_MAX_X: 15
-  ROOM_MAX_Y: 10
+  ROOM_MAX_X: 16
+  ROOM_MAX_Y: 16
   roomPrefab: {fileID: 155242, guid: 32ce65ab3c8da26438fe1acbf42493d4, type: 2}
   wallPrefab: {fileID: 169944, guid: 4194807bf6a9fba4db123714bf8eb110, type: 2}
   iteration: 10
   DX: 1
   DY: 1
   Re: 500
-  deltaT: .00999999978
+  deltaT: .0500000007
   maxPsi0: .0199999996
   minPsi0: -.100000001
   maxOmg0: 20
@@ -139,6 +140,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!114 &535448923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 535448920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 233ab61092ff749db8eaa8a8447b913d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &992558929
 GameObject:
   m_ObjectHideFlags: 0
