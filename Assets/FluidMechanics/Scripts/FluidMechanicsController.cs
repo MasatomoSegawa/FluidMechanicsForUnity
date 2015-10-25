@@ -94,6 +94,11 @@ public class FluidMechanicsController : MonoBehaviour
     void Update()
     {
 
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            DebugLog();
+        }
+
         // step1
         // 境界条件
         Calculate_Boundarycondition();
@@ -466,54 +471,28 @@ public class FluidMechanicsController : MonoBehaviour
         {
             for (int X = 0; X < ROOM_MAX_X; X++)
             {
-
                 PhysicsRoom currentRoom = rooms[Y][X].GetComponent<PhysicsRoom>();
-
-                float left = VelX[X, Y];
-                float right = VelX[X + 1, Y];
-                float down = VelY[X, Y];
-                float up = VelX[X, Y + 1];
-               
-                string str = "(X,Y) = (" + X.ToString() + " , " + Y.ToString() + ")\n";
-                str += "Left  : VelX[" + X.ToString() + "][" + Y.ToString() + "] = " + VelX[X, Y] + "\n";
-                str += "Right : VelX[" + X.ToString() + " + 1][" + Y.ToString() + "] = " + VelX[X + 1, Y] + "\n";
-                str += "Up    : VelY[" + X.ToString() + "][" + Y.ToString() + "] = " + VelX[X, Y] + "\n";
-                str += "Down  : VelY[" + X.ToString() + "][" + Y.ToString() + " + 1] = " + VelX[X, Y + 1] + "\n";
-
-                if (X == 13 && Y == 8)
-                {
-                    Debug.Log(VelX[X,Y + 1]);
-                    //Debug.Log(str);
-                }
-
-                //Debug.Log(str);
-
-                currentRoom.UpdateVelocity(right, left, down, up);
-
-                /*
-                if (currentRoom.isWall == false)
-                {
-
-                    float left = VelX[X, Y];
-                    float right = VelX[X + 1, Y];
-                    float down = VelY[X, Y];
-                    float up = VelX[X, Y + 1];
-
-                    string str = "(X,Y) = (" + X.ToString() + " , " + Y.ToString() + ")\n";
-                    str += "VelX[" + X.ToString() + "][" + Y.ToString() + "] = " + VelX[X, Y] + "\n";
-                    str += "VelX[" + X.ToString() + " + 1][" + Y.ToString() + "] = " + VelX[X + 1, Y] + "\n";
-                    str += "VelY[" + X.ToString() + "][" + Y.ToString() + "] = " + VelX[X, Y] + "\n";
-                    str += "VelY[" + X.ToString() + "][" + Y.ToString() + " + 1] = " + VelX[X, Y + 1] + "\n";
-
-                    //Debug.Log(str);
-
-                    currentRoom.UpdateVelocity(left,right,up,down);
-
-                }*/
-
             }
         }
+
+
+
     }
     #endregion
+
+    void DebugLog()
+    {
+        string str = "";
+        for (int j = 0; j < NY; j++)
+        {
+            for (int i = 0; i < NX; i++)
+            {
+                str += "(" + VelX[i, j].ToString("F4") + " , " + VelY[i, j].ToString("F4") + ")\t";
+            }
+            str += "\n";
+        }
+        Debug.Log(str);
+    }
+
 
 }

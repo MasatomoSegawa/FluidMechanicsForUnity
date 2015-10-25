@@ -13,11 +13,8 @@ public class PhysicsRoom : MonoBehaviour {
     public float Up;
     public float Down;
 
-    public void UpdateVelocity(float left,float right, float up, float down)
+    public void UpdateVelocity(float left,float right, float up, float down,float VelX, float VelY)
     {
-
-        float VelX = (left + right)/2.0f;
-        float VelY = (up + down)/2.0f;
 
         Left = left;
         Right = right;
