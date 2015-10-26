@@ -43,7 +43,7 @@ GameObject:
   - 212: {fileID: 21263794}
   - 114: {fileID: 11485844}
   m_Layer: 0
-  m_Name: Room
+  m_Name: Room(15 , 12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -117,7 +117,7 @@ Transform:
   m_GameObject: {fileID: 124754}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 2, z: 1}
+  m_LocalScale: {x: .100000001, y: 1, z: 0}
   m_Children: []
   m_Father: {fileID: 491530}
   m_RootOrder: 0
@@ -164,7 +164,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 155242}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.28999996, y: -.129999995, z: 0}
+  m_LocalPosition: {x: 22.0124989, y: 16.1424999, z: 1}
   m_LocalScale: {x: .25, y: .25, z: 1}
   m_Children:
   - {fileID: 404854}
@@ -189,7 +189,7 @@ MonoBehaviour:
   presser: 0
   arrowSprite: {fileID: 124754}
   scale: 100
-  isWall: 0
+  myType: 0
   Left: 0
   Right: 0
   Up: 0

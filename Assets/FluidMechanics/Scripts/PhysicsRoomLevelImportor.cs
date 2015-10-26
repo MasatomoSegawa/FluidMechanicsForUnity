@@ -10,9 +10,17 @@ public struct RoomInformation{
 }
 
 public enum RoomType{
-	Normal = 0,Wall = 1,
+	Normal = 0,Wall = 1,InLet = 2, OutLet = 3,
 }
 
+/// <summary>
+/// 部屋のレベルデータをパースするクラス.
+/// 以下csvファイル構成
+/// 0 - 空
+/// 1 - 壁
+/// I - 流入口
+/// O - 流出口
+/// </summary>
 public class PhysicsRoomLevelImportor : MonoBehaviour {
 
 	const float ROOM_SPRITE_LENGTH = 2.935f;
@@ -27,6 +35,8 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 		int ROOM_MAX_X = All_Colmn [0].Split (',').Length - 1;
 		GameObject physicsRoomPrefab = Resources.Load ("Room") as GameObject;
 		GameObject wallRoomPrefab = Resources.Load ("Wall") as GameObject;
+		GameObject inLetRoomPrefab = Resources.Load ("InLet") as GameObject;
+		GameObject outLetRoomPrefab = Resources.Load ("OutLet") as GameObject;
 		List<List<GameObject>> rooms = new List<List<GameObject>> ();
 		RoomInformation roomInformation = new RoomInformation ();
 
@@ -42,14 +52,30 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 			for (int X = 0; X < ROOM_MAX_X; X++) {
 
 				string value = values [X];
-				GameObject roomObject;
+				GameObject roomObject = null;
 
-				if (value == "0") {
+				switch (value) {
+				case "0":
 					roomObject = Instantiate (physicsRoomPrefab);
-				} else {
-					roomObject = Instantiate (wallRoomPrefab);
-				}
+					break;
 
+				case "1":
+					roomObject = Instantiate (wallRoomPrefab);
+					break;
+
+				case "I":
+					roomObject = Instantiate (inLetRoomPrefab);
+					break;
+
+				case "O":
+					roomObject = Instantiate (outLetRoomPrefab);
+					break;
+
+				default:
+					roomObject = Instantiate (wallRoomPrefab);
+					break;
+				}
+					
 				Vector3 newPosition = Vector3.zero;
 				if (ROOM_MAX_X % 2 == 0)
 				{

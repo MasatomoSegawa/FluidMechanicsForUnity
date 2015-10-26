@@ -6,7 +6,7 @@ public class PhysicsRoom : MonoBehaviour {
     public float presser;
     public GameObject arrowSprite;
     public float scale;
-    public bool isWall = false;
+	public RoomType myType;
 
     public float Left;
     public float Right;
@@ -16,7 +16,7 @@ public class PhysicsRoom : MonoBehaviour {
 	public void UpdateVelocity(float VelX, float VelY)
 	{
 
-		if (isWall == false)
+		if (myType == RoomType.Normal)
 		{
 
 			float angle = Mathf.Atan2(VelX * 100.0f,VelY * 100.0f) * 100.0f;
@@ -52,7 +52,7 @@ public class PhysicsRoom : MonoBehaviour {
         Up = up;
         Down = down;
 
-        if (isWall == false)
+		if (myType == RoomType.Normal)
         {
 
             velocity = new Vector2(VelX, VelY);
