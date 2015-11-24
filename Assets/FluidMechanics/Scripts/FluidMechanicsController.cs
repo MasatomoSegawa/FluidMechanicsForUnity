@@ -82,13 +82,15 @@ public class FluidMechanicsController : MonoBehaviour
 
     #endregion
 
+	public string roomLevelFileName;
+
     #region Unityライフサイクル.
 
     void Start()
     {
 
 		PhysicsRoomLevelImportor physicsRoomLevelImportor = GetComponent<PhysicsRoomLevelImportor> ();
-		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation ("roomLevel");
+		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation (roomLevelFileName);
 	
 		InitPhysicsRooms (roomInformation);
 

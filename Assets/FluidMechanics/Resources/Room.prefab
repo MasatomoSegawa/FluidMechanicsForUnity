@@ -43,7 +43,7 @@ GameObject:
   - 212: {fileID: 21263794}
   - 114: {fileID: 11485844}
   m_Layer: 0
-  m_Name: Room(15 , 12)
+  m_Name: Room
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
