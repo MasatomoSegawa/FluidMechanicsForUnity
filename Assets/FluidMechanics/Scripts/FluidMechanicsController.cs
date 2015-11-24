@@ -70,6 +70,9 @@ public class FluidMechanicsController : MonoBehaviour
     // 過度.
     private float[,] omg;
 
+    // 部屋のタイプ.
+    private RoomType[,] roomTypes;
+
     private int NX;
     private int NY;
 
@@ -82,23 +85,19 @@ public class FluidMechanicsController : MonoBehaviour
 
     #endregion
 
-	public string roomLevelFileName;
-
     #region Unityライフサイクル.
 
     void Start()
     {
 
 		PhysicsRoomLevelImportor physicsRoomLevelImportor = GetComponent<PhysicsRoomLevelImportor> ();
-		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation (roomLevelFileName);
+		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation ("roomLevel2");
 	
 		InitPhysicsRooms (roomInformation);
 
         InitData();
 
     }
-
-
 
     void Update()
     {
@@ -133,26 +132,44 @@ public class FluidMechanicsController : MonoBehaviour
 
     #region 流体力学用の関数.
 
-	private void InitPhysicsRooms(RoomInformation roomInformation){
+    private void InitPhysicsRooms(RoomInformation roomInformation)
+    {
 
-		rooms = roomInformation.physicsRooms;
+        rooms = roomInformation.physicsRooms;
 
-		this.ROOM_MAX_X = roomInformation.ROOM_MAX_X;
-		this.ROOM_MAX_Y = roomInformation.ROOM_MAX_Y;
+        ROOM_MAX_X = roomInformation.ROOM_MAX_X;
+        ROOM_MAX_Y = roomInformation.ROOM_MAX_Y;
 
-		// 速度点は(部屋の数+1)個存在する.
-		NX = ROOM_MAX_X + 1;
-		NY = ROOM_MAX_Y + 1;
+        // 速度点は(部屋の数+1)個存在する.
+        NX = ROOM_MAX_X + 1;
+        NY = ROOM_MAX_Y + 1;
 
-	}
+        // 部屋のタイプリストオブジェクトを初期化.
+        roomTypes = new RoomType[NX + 1, NY + 1];
 
-	/// <summary>
-	/// PhysicsRoomを構築する.
-	/// </summary>
-	private void InitPhysicsRooms(){
+        for (int Y = 0; Y < ROOM_MAX_Y; Y++)
+        {
+            for (int X = 0; X < ROOM_MAX_X; X++)
+            {
+
+                PhysicsRoom currentRoom = rooms[Y][X].GetComponent<PhysicsRoom>();
+                roomTypes[X, Y] = currentRoom.myType;
+
+            }
+        }
+
+    }
+
+    /// <summary>
+    /// PhysicsRoomを構築する.
+    /// </summary>
+    private void InitPhysicsRooms(){
 
 		// 部屋のリストオブジェクトを初期化.
 		rooms = new List<List<GameObject>>();
+
+        // 部屋のタイプリストオブジェクトを初期化.
+        roomTypes = new RoomType[NX + 1, NY + 1];
 
 		// 速度点は(部屋の数+1)個存在する.
 		NX = ROOM_MAX_X + 1;
@@ -204,7 +221,7 @@ public class FluidMechanicsController : MonoBehaviour
     /// </summary>
     private void InitData()
     {
-	
+
         prs = new float[NX + 1, NY + 1];
         psi = new float[NX + 1, NY + 1];
         omg = new float[NX + 1, NY + 1];
@@ -216,6 +233,36 @@ public class FluidMechanicsController : MonoBehaviour
         velXgy = new float[NX + 1, NY + 1];
         velYgx = new float[NX + 1, NY + 1];
         velYgy = new float[NX + 1, NY + 1];
+
+        //入口/出口は流速1
+        for (int j = 0; j <= NY; j++)
+            for (int i = 0; i <= NX; i++)
+            {
+                //圧力
+                prs[i,j] = 0.0f;
+                //速度
+                if (roomTypes[i, j] == RoomType.Wall)
+                {
+                    velX[i, j] = 0.0f;
+                }
+                else
+                {
+                    //velX[i, j] = 1.0f;//その他はすべて1で初期化
+                }
+
+                velY[i,j] = 0.0f;//すべての速度ｙ成分は0
+                velXgx[i,j] = 0.0f;
+                velXgy[i,j] = 0.0f;
+                velYgx[i,j] = 0.0f;
+                velYgy[i,j] = 0.0f;
+                VelX[i,j] = velX[i,j];
+                VelY[i,j] = velY[i,j];
+                omg[i,j] = 0.0f;//渦度
+            }
+
+        maxPrs0 = -1000.0f; minPrs0 = 1000.0f;
+        maxOmg0 = -1000.0f; minOmg0 = 1000.0f;
+
 
     }
 
@@ -229,6 +276,19 @@ public class FluidMechanicsController : MonoBehaviour
     private void Calculate_Boundarycondition()
     {
 
+        // 入出力
+        for (int i = 0; i < NX; i++)
+        {
+            for (int j = 0; j < NY; j++)
+            {
+                if (roomTypes[i, j] == RoomType.InLet || roomTypes[i, j] == RoomType.OutLet)
+                {
+                    velX[i, j] = 1.0f;
+                    //Debug.Log("(" + i.ToString() + "," + j.ToString() + ")");
+                }
+            }
+        }
+
         // 上下.
         for (int i = 0; i <= NX; i++)
         {
@@ -239,7 +299,7 @@ public class FluidMechanicsController : MonoBehaviour
             velX[i, 0] = velX[i, 1];
 
             // ↑についての境界条件
-            velX[i, NY - 1] = 2.0f - velX[i, NY - 2];//上境界度を1とする(平均値が1となる)の速
+            velX[i, NY - 1] = -velX[i, NY - 2];//上境界度を1とする(平均値が1となる)の速
             velY[i, NY] = -velY[i, NY - 2];
             velY[i, NY - 1] = 0.0f;
 
@@ -248,14 +308,48 @@ public class FluidMechanicsController : MonoBehaviour
         //左右
         for (int j = 0; j <= NY; j++)
         {
-            velX[0, j] = velX[2, j];
-            velX[1, j] = 0.0f;
-            velY[0, j] = -velY[1, j];
+            if (roomTypes[0, j] == RoomType.InLet || roomTypes[0,j] == RoomType.OutLet)
+            {
+                velX[0, j] = 1.0f;
+            }
+            else
+            {
+                velX[0, j] = velX[2, j];
+                velX[1, j] = 0.0f;
+                velY[0, j] = -velY[1, j];
 
-            velX[NX, j] = velX[NX - 2, j];
-            velX[NX - 1, j] = 0.0f;
-            velY[NX - 1, j] = -velY[NX - 2, j];
+                velX[NX, j] = velX[NX - 2, j];
+                velX[NX - 1, j] = 0.0f;
+                velY[NX - 1, j] = -velY[NX - 2, j];
+            }
         }
+
+        /*
+          //障害物左右
+  for(j = nY1; j <= nY2; j++)
+  {
+    //左端
+    velX[nX1+1][j] =  velX[nX1-1][j];
+    velX[nX1][j]   =  0.0;
+    velY[nX1][j]   = -velY[nX1-1][j];
+    //右端
+    velX[nX2-1][j] =  velX[nX2+1][j];
+    velX[nX2][j]   =  0.0;
+    velY[nX2-1][j] = -velY[nX2][j];
+  }
+  //障害物上下
+  for(i = nX1; i <= nX2; i++)
+  {
+    //上端
+    velX[i][nY2] = - velX[i][nY2+1];
+    velY[i][nY2-1] = velY[i][nY2+1];
+    velY[i][nY2]   = 0.0;
+    //下端
+    velX[i][nY1+1] = - velX[i][nY1];
+    velY[i][nY1+1] = velY[i][nY1-1];
+    velY[i][nY1]   = 0.0;
+  }
+        */
 
     }
 
@@ -266,6 +360,7 @@ public class FluidMechanicsController : MonoBehaviour
         for (int j = 1; j < NY - 1; j++)
             for (int i = 2; i < NX - 1; i++)
             {
+                
                 velX[i, j] += -deltaT * (prs[i, j] - prs[i - 1, j]) / DX;
             }
         for (int j = 2; j < NY - 1; j++)
@@ -298,6 +393,7 @@ public class FluidMechanicsController : MonoBehaviour
 
         //流れ関数，圧力、渦度の最小値，最大値
         for (int i = 1; i < NX; i++)
+        {
             for (int j = 1; j < NY; j++)
             {
                 if (prs[i, j] > maxPrs0) maxPrs0 = prs[i, j];
@@ -307,6 +403,9 @@ public class FluidMechanicsController : MonoBehaviour
                 if (omg[i, j] > maxOmg0) maxOmg0 = omg[i, j];
                 if (omg[i, j] < minOmg0) minOmg0 = omg[i, j];
             }
+        }
+
+
 
     }
 
@@ -327,9 +426,12 @@ public class FluidMechanicsController : MonoBehaviour
         for (int j = 1; j < NY - 1; j++)
             for (int i = 1; i < NX - 1; i++)
             {
-                float a = (velX[i + 1, j] - velX[i, j]) / DX;
-                float b = (velY[i, j + 1] - velY[i, j]) / DY;
-                D[i, j] = A3 * (a + b) / deltaT;
+                if (roomTypes[i, j] != RoomType.Wall)
+                {
+                    float a = (velX[i + 1, j] - velX[i, j]) / DX;
+                    float b = (velY[i, j + 1] - velY[i, j]) / DY;
+                    D[i, j] = A3 * (a + b) / deltaT;
+                }
             }
 
         //反復法
@@ -350,13 +452,28 @@ public class FluidMechanicsController : MonoBehaviour
                 prs[i, NY - 1] = prs[i, NY - 2] + 2.0f * velY[i, NY] / (DY * Re);//上端
             }
 
+            // 障害物.
+            for(int j = 0; j < NY; j++)
+            {
+                for(int i = 0; i < NX; i++)
+                {
+                    if(roomTypes[i,j] == RoomType.Wall)
+                    {
+                        prs[i, j] = maxPrs0;
+                    }
+                }
+            }
+
             for (int j = 1; j < NY - 1; j++)
                 for (int i = 1; i < NX - 1; i++)
                 {
-                    float pp = A1 * (prs[i + 1, j] + prs[i - 1, j]) + A2 * (prs[i, j + 1] + prs[i, j - 1]) - D[i, j];
-                    float error = Mathf.Abs(pp - prs[i, j]);
-                    if (error > maxError) maxError = error;
-                    prs[i, j] = pp;//更新 
+                    if (roomTypes[i, j] != RoomType.Wall)
+                    {
+                        float pp = A1 * (prs[i + 1, j] + prs[i - 1, j]) + A2 * (prs[i, j + 1] + prs[i, j - 1]) - D[i, j];
+                        float error = Mathf.Abs(pp - prs[i, j]);
+                        if (error > maxError) maxError = error;
+                        prs[i, j] = pp;//更新 
+                    }
                 }
             if (maxError < tolerance) break;
 
@@ -475,8 +592,7 @@ public class FluidMechanicsController : MonoBehaviour
             {
 				PhysicsRoom currentRoom = rooms[Y][X].GetComponent<PhysicsRoom>();
 
-				currentRoom.UpdateVelocity (VelX [X + 1,ROOM_MAX_Y - Y - 1], VelY [X + 1, ROOM_MAX_Y - Y - 1]);
-
+				currentRoom.UpdateVelocity (VelX [X,Y], VelY [X,Y]);
             }
         }
 

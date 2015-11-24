@@ -85,6 +85,52 @@ NavMeshSettings:
     cellSize: .166666672
     manualCellSize: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &54943032
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 472150, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 17.2999992
+      objectReference: {fileID: 0}
+    - target: {fileID: 472150, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 13.3999996
+      objectReference: {fileID: 0}
+    - target: {fileID: 472150, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 472150, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 472150, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 472150, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 472150, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 472150, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5075466, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
+      propertyPath: m_AngularDrag
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &535448920
 GameObject:
   m_ObjectHideFlags: 0
@@ -120,8 +166,8 @@ MonoBehaviour:
   iteration: 10
   DX: 1
   DY: 1
-  Re: 500
-  deltaT: .0500000007
+  Re: 1000
+  deltaT: .00999999978
   maxPsi0: .0199999996
   minPsi0: -.100000001
   maxOmg0: 20
