@@ -22,9 +22,6 @@ public class PhysicsRoom : MonoBehaviour {
 			float angle = Mathf.Atan2(VelX * 100.0f,VelY * 100.0f) * 100.0f;
 			velocity = new Vector2(VelX, VelY);
 
-			if(Input.GetKeyDown(KeyCode.B))
-			Debug.Log (angle);
-
 			float mag = velocity.sqrMagnitude;
 
 			// スケールの更新.
@@ -77,4 +74,29 @@ public class PhysicsRoom : MonoBehaviour {
 
     }
 	
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        
+        if(other.tag == "Smoke")
+        {
+
+
+
+        }
+
+    }
+
+    void OnTriggerStay2D(Collider2D other)
+    {
+
+        if (other.tag == "Smoke")
+        {
+
+            Smoke smoke = other.GetComponent<Smoke>();
+            smoke.UpdateVelocity(velocity);
+
+        }
+
+    }
+
 }
