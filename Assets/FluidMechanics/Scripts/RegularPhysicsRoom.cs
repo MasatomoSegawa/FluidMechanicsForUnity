@@ -35,10 +35,20 @@ public class RegularPhysicsRoom : MonoBehaviour {
             // 角度の更新.
             arrowSprite.transform.rotation = Quaternion.AngleAxis(angle, new Vector3(0.0f, 0.0f, 1.0f));
 
-
-
         }
 
-
     }
+
+	void OnTriggerEnter2D(Collider2D other){
+
+		Debug.Log (other.name);
+
+		if (other.tag == "Smoke") {
+
+			Destroy (other);
+
+		}
+
+	}
+
 }

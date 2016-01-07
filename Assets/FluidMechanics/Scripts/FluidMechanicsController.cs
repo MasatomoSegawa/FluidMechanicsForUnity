@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class FluidMechanicsController : MonoBehaviour
+public class FluidMechanicsController : Singleton<FluidMechanicsController>
 {
     #region 描画用の変数
     // 1ルーム当たりのスプライトの大きさ.
@@ -21,6 +22,12 @@ public class FluidMechanicsController : MonoBehaviour
 
     // Roomの2次元リスト.
     private List<List<GameObject>> rooms;
+
+	// 時間表示用UIText.
+	private Text TimeText;
+
+	// 経過時間.
+	private float currentTime;
     #endregion
 
     #region 数値計算用変数
@@ -83,6 +90,9 @@ public class FluidMechanicsController : MonoBehaviour
     public float maxPrs0 = 1.0f;
     public float minPrs0 = -0.4f;
 
+	// タバコオブジェクト.
+	private GameObject tabaccoObject;
+
     #endregion
 
     #region Unityライフサイクル.
@@ -91,11 +101,13 @@ public class FluidMechanicsController : MonoBehaviour
     {
 
 		PhysicsRoomLevelImportor physicsRoomLevelImportor = GetComponent<PhysicsRoomLevelImportor> ();
-		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation ("roomLevel2");
+		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation ("roomLevel3");
 	
 		InitPhysicsRooms (roomInformation);
 
         InitData();
+
+		TimeText = GameObject.Find ("TimeText").GetComponent<Text> ();
 
     }
 
@@ -126,6 +138,8 @@ public class FluidMechanicsController : MonoBehaviour
         // 描画更新.
         DrawVelocity();
 
+		currentTime += deltaT;
+		TimeText.text = "Time:" + currentTime.ToString("F1");
     }
 
     #endregion
@@ -263,6 +277,9 @@ public class FluidMechanicsController : MonoBehaviour
         maxPrs0 = -1000.0f; minPrs0 = 1000.0f;
         maxOmg0 = -1000.0f; minOmg0 = 1000.0f;
 
+		// タバコオブジェクトを取得.
+		tabaccoObject = GameObject.FindGameObjectWithTag ("Tabacco");
+		tabaccoObject.GetComponent<Tabacco> ().StartExtractSmoke ();
 
     }
 
@@ -595,8 +612,6 @@ public class FluidMechanicsController : MonoBehaviour
 				currentRoom.UpdateVelocity (VelX [X,Y], VelY [X,Y]);
             }
         }
-
-
 
     }
     #endregion

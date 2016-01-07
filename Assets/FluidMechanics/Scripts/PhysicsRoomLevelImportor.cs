@@ -20,6 +20,8 @@ public enum RoomType{
 /// 1 - 壁
 /// I - 流入口
 /// O - 流出口
+/// S - セーフルーム
+/// T - タバコ
 /// </summary>
 public class PhysicsRoomLevelImportor : MonoBehaviour {
 
@@ -38,6 +40,7 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
         GameObject wallRoomPrefab = Resources.Load("Re_Wall") as GameObject;
         GameObject inLetRoomPrefab = Resources.Load("Re_InLet") as GameObject;
         GameObject outLetRoomPrefab = Resources.Load("Re_OutLet") as GameObject;
+		GameObject safeRoomPrefab = Resources.Load ("SafeAria")as GameObject;
         List<List<GameObject>> rooms = new List<List<GameObject>>();
         RoomInformation roomInformation = new RoomInformation();
 
@@ -74,6 +77,10 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
                     case "O":
                         roomObject = Instantiate(outLetRoomPrefab);
                         break;
+
+					case "S":
+					roomObject = Instantiate (safeRoomPrefab);
+					break;
 
                     default:
                         roomObject = Instantiate(wallRoomPrefab);
@@ -125,6 +132,8 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 		GameObject wallRoomPrefab = Resources.Load ("Wall") as GameObject;
 		GameObject inLetRoomPrefab = Resources.Load ("InLet") as GameObject;
 		GameObject outLetRoomPrefab = Resources.Load ("OutLet") as GameObject;
+		GameObject safeRoomPrefab = Resources.Load ("SafeAria") as GameObject;
+		GameObject tabaccoinPhysicsRoomPrefab = Resources.Load ("TabaccoInRoom") as GameObject;
 		List<List<GameObject>> rooms = new List<List<GameObject>> ();
 		RoomInformation roomInformation = new RoomInformation ();
 
@@ -156,6 +165,14 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 
 				case "O":
 					roomObject = Instantiate (outLetRoomPrefab);
+					break;
+
+				case "S":
+					roomObject = Instantiate (safeRoomPrefab);
+					break;
+
+				case "T":
+					roomObject = Instantiate (tabaccoinPhysicsRoomPrefab);
 					break;
 
 				default:

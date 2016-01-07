@@ -2,24 +2,47 @@
 
 public class Smoke : MonoBehaviour {
 
-    public Vector2 velocity;
+	public Vector3 velocity;
 
     public Rigidbody2D myPhysics;
+
+	public float k = 0.5f;
+
+	// ゆらぎ
+	public float f_Max;
+	public float f_Min;
+
+	private float deltaT;
 
     void Start()
     {
         myPhysics = GetComponent<Rigidbody2D>();
+
+		deltaT = FluidMechanicsController.Instance.deltaT;
+
     }
     
-    public void UpdateVelocity(Vector2 windSpeed)
+	public void UpdateVelocity(Vector3 windSpeed)
     {
 
-        velocity = windSpeed;
+		velocity = k * (velocity - windSpeed) * 1.0f / 1.0f * deltaT;
 
-        Vector2 nowVelocity = myPhysics.velocity;
+		Vector3 f_vector = new Vector3 (Random.Range (f_Min, f_Max), Random.Range (f_Min, f_Max), 0.0f);
 
-        myPhysics.velocity = 0.5f * (nowVelocity - windSpeed) * 1.0f / 1.0f;
+		myPhysics.MovePosition (transform.position + velocity + f_vector);
 
     }
+
+	void OnDrawGizmos(){
+
+		Vector3 direction = velocity.normalized;
+		float length = 5.0f;
+
+		//Debug.Log (transform.position + direction * length);
+
+		Gizmos.color = Color.red;
+		Gizmos.DrawLine (transform.position, transform.position + direction * length);
+
+	}
 
 }
