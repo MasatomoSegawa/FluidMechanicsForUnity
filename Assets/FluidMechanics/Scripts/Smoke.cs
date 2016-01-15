@@ -2,6 +2,8 @@
 
 public class Smoke : MonoBehaviour {
 
+	private Vector3 affectWind;
+
 	public Vector3 velocity;
 
     public Rigidbody2D myPhysics;
@@ -21,13 +23,35 @@ public class Smoke : MonoBehaviour {
 		deltaT = FluidMechanicsController.Instance.deltaT;
 
     }
+
+	public void Test(Vector3 wind){
+		affectWind = wind;
+
+	}
+
+	void Update(){
+
+
+		velocity += ((affectWind - velocity) * k / 1.0f) * deltaT;
+		//velocity = windSpeed;
+
+		Vector3 f_vector = new Vector3 (Random.Range (f_Min, f_Max), Random.Range (f_Min, f_Max), 0.0f);
+		//f_vector = Vector3.zero;
+
+		myPhysics.MovePosition (transform.position + velocity + f_vector);
+
+
+	}
     
 	public void UpdateVelocity(Vector3 windSpeed)
     {
 
-		velocity = k * (velocity - windSpeed) * 1.0f / 1.0f * deltaT;
+
+		velocity += ((windSpeed - velocity) * k / 1.0f) * deltaT;
+		//velocity = windSpeed;
 
 		Vector3 f_vector = new Vector3 (Random.Range (f_Min, f_Max), Random.Range (f_Min, f_Max), 0.0f);
+		//f_vector = Vector3.zero;
 
 		myPhysics.MovePosition (transform.position + velocity + f_vector);
 

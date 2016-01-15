@@ -14,6 +14,11 @@ public class Tabacco : MonoBehaviour {
 	private bool isExtractSmoke = false;
 	private float nextTime;
 
+	[Header("最大排出数")]
+	public int maxExtractNumber = 20;
+
+	private int currentExtractedNumber = 0;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -30,7 +35,7 @@ public class Tabacco : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
-		if (isExtractSmoke == true && nextTime + extractDuration <= Time.time) {
+		if (isExtractSmoke == true && nextTime + extractDuration <= Time.time && currentExtractedNumber < maxExtractNumber) {
 			nextTime = Time.time + extractDuration;
 			ExtractSmoke ();
 		}
@@ -48,6 +53,7 @@ public class Tabacco : MonoBehaviour {
 		// 初期速度の初期化.
 		smokeObject.GetComponent<Smoke> ().velocity = direction.normalized * initSmokeOfSpeed;
 
+		currentExtractedNumber++;
 	}
 
 

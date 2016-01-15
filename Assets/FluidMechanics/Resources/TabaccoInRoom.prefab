@@ -235,6 +235,7 @@ MonoBehaviour:
   arrowSprite: {fileID: 141106}
   scale: 100
   myType: 0
+  constantVelocity: {x: 0, y: 0}
   Left: 0
   Right: 0
   Up: 0
@@ -254,6 +255,7 @@ MonoBehaviour:
   initSmokeOfSpeed: 0.0001
   smoke: {fileID: 119406, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
   extractDuration: 1.5
+  maxExtractNumber: 1
 --- !u!212 &21209036
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -482,6 +484,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: initSmokeOfSpeed
       value: 0.0001
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: maxExtractNumber
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

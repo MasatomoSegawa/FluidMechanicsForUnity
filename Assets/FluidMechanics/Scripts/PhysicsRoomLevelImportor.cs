@@ -18,8 +18,9 @@ public enum RoomType{
 /// 以下csvファイル構成
 /// 0 - 空
 /// 1 - 壁
-/// I - 流入口
-/// O - 流出口
+/// "方向" + I - 流入口
+/// "方向" + O - 流出口
+/// ←↑↓→ - 強制排出(吸気口/排気口)
 /// S - セーフルーム
 /// T - タバコ
 /// </summary>
@@ -166,6 +167,27 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 				case "O":
 					roomObject = Instantiate (outLetRoomPrefab);
 					break;
+
+				case "←":
+					roomObject = Instantiate (inLetRoomPrefab);
+					roomObject.GetComponent<PhysicsRoom> ().constantVelocity = new Vector2 (1.0f, 0.0f);
+					break;
+
+				case "→":
+					roomObject = Instantiate (inLetRoomPrefab);
+					roomObject.GetComponent<PhysicsRoom> ().constantVelocity = new Vector2 (-1.0f, 0.0f);
+					break;
+
+				case "↓":
+					roomObject = Instantiate (inLetRoomPrefab);
+					roomObject.GetComponent<PhysicsRoom> ().constantVelocity = new Vector2 (0.0f, -1.0f);
+					break;
+
+				case "↑":
+					roomObject = Instantiate (inLetRoomPrefab);
+					roomObject.GetComponent<PhysicsRoom> ().constantVelocity = new Vector2 (0.0f, 1.0f);
+					break;
+
 
 				case "S":
 					roomObject = Instantiate (safeRoomPrefab);

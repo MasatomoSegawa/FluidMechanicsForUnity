@@ -8,6 +8,8 @@ public class PhysicsRoom : MonoBehaviour {
     public float scale;
 	public RoomType myType;
 
+	public Vector2 constantVelocity;
+
     public float Left;
     public float Right;
     public float Up;
@@ -79,8 +81,8 @@ public class PhysicsRoom : MonoBehaviour {
         
         if(other.tag == "Smoke")
         {
-
-
+			Smoke smoke = other.GetComponent<Smoke>();
+			smoke.Test (velocity);
 
         }
 
@@ -91,9 +93,9 @@ public class PhysicsRoom : MonoBehaviour {
 
         if (other.tag == "Smoke")
         {
-
-            Smoke smoke = other.GetComponent<Smoke>();
-            smoke.UpdateVelocity(velocity);
+			Debug.Log (velocity);
+			//Smoke smoke = other.GetComponent<Smoke>();
+			//smoke.UpdateVelocity(velocity);
 
         }
 

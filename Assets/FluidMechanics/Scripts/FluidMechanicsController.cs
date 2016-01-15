@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 public class FluidMechanicsController : Singleton<FluidMechanicsController>
 {
+	#region Utility
+	[Header("流体ルーム用のTextAsset")]
+	public TextAsset roomLevelTextAsset;
+	#endregion
+
     #region 描画用の変数
     // 1ルーム当たりのスプライトの大きさ.
     const float ROOM_SPRITE_LENGTH = 2.935f;
@@ -15,10 +20,10 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
     public int ROOM_MAX_Y;
 
     [Header("部屋のPrfab")]
-    public GameObject roomPrefab;
+	public GameObject roomPrefab;
 
     [Header("壁のprefab")]
-    public GameObject wallPrefab;
+	public GameObject wallPrefab;
 
     // Roomの2次元リスト.
     private List<List<GameObject>> rooms;
@@ -101,7 +106,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
     {
 
 		PhysicsRoomLevelImportor physicsRoomLevelImportor = GetComponent<PhysicsRoomLevelImportor> ();
-		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation ("roomLevel3");
+		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation (roomLevelTextAsset.name);
 	
 		InitPhysicsRooms (roomInformation);
 
@@ -293,18 +298,41 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
     private void Calculate_Boundarycondition()
     {
 
+		//Debug.Log("(" + NX + "," + NY + ")");
+		//Debug.Log ("(" + rooms[0].Count + "," + rooms.Count + ")");
+
+		/*
         // 入出力
         for (int i = 0; i < NX; i++)
         {
             for (int j = 0; j < NY; j++)
             {
                 if (roomTypes[i, j] == RoomType.InLet || roomTypes[i, j] == RoomType.OutLet)
-                {
-                    velX[i, j] = 1.0f;
+                {			
+
+					velX[i,j] = rooms [j] [i].GetComponent<PhysicsRoom> ().constantVelocity.x;
+					//velX[i, j] = 1.0f;
                     //Debug.Log("(" + i.ToString() + "," + j.ToString() + ")");
                 }
             }
-        }
+		}*/
+
+		for (int i = 0; i < ROOM_MAX_X; i++) {
+			for (int j = 0; j < ROOM_MAX_Y; j++) {
+
+				if (rooms [j] [i].GetComponent<PhysicsRoom> ().myType == RoomType.InLet ||
+					rooms [j] [i].GetComponent<PhysicsRoom> ().myType == RoomType.OutLet) {
+
+					if (i - 1 >= 0) {
+						velX [i - 1, j] = rooms [j] [i].GetComponent<PhysicsRoom> ().constantVelocity.x;
+					}
+					if (i + 1 < NX) {
+						velX [i + 1, j] = rooms [j] [i].GetComponent<PhysicsRoom> ().constantVelocity.x;
+					}
+				}
+			}
+		}
+
 
         // 上下.
         for (int i = 0; i <= NX; i++)
@@ -376,8 +404,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
         //step5(スタガード格子点の速度ベクトルの更新）
         for (int j = 1; j < NY - 1; j++)
             for (int i = 2; i < NX - 1; i++)
-            {
-                
+            {                
                 velX[i, j] += -deltaT * (prs[i, j] - prs[i - 1, j]) / DX;
             }
         for (int j = 2; j < NY - 1; j++)

@@ -8,6 +8,7 @@ public class RegularPhysicsRoom : MonoBehaviour {
     public GameObject arrowSprite;
     public float scale;
     public float p;
+	public Vector2 constantVelocity;
 
     public void UpdateVariables(float VelX, float VelY,float p)
     {
