@@ -1,6 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections;
+using System.IO;
+
+[System.Serializable]
+public struct DeltaVelocityData{
+	public float absVelocity;
+	public float timeStamp;
+}
 
 public class FluidMechanicsController : Singleton<FluidMechanicsController>
 {
@@ -37,7 +45,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
     #region 数値計算用変数
 
-    [Header("リラクゼーション数")]
+    [Header("リラクゼーション数")]       
     public int iteration = 10;
 
     [Header("デルタX")]
@@ -98,12 +106,19 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 	// タバコオブジェクト.
 	private GameObject tabaccoObject;
 
+	public List<DeltaVelocityData> deltaVelocityDataList;
+	private float coolTime = 1.0f;
+	private float nextTime;
+	private bool endFlag = false;
+
     #endregion
 
     #region Unityライフサイクル.
 
     void Start()
     {
+
+		deltaVelocityDataList = new List<DeltaVelocityData> ();
 
 		PhysicsRoomLevelImportor physicsRoomLevelImportor = GetComponent<PhysicsRoomLevelImportor> ();
 		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation (roomLevelTextAsset.name);
@@ -114,14 +129,64 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 		TimeText = GameObject.Find ("TimeText").GetComponent<Text> ();
 
+		nextTime = coolTime + Time.time;
     }
+
+	IEnumerator StartSimulation(){
+
+		PhysicsRoomLevelImportor physicsRoomLevelImportor = GetComponent<PhysicsRoomLevelImportor> ();
+		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation (roomLevelTextAsset.name);
+
+		// ルームのInLet/Outletの全てのパターンを試して,
+		// タバコの粒子の煙が少ないパターンを得る.
+
+		InitPhysicsRooms (roomInformation);
+
+		InitData();
+
+		TimeText = GameObject.Find ("TimeText").GetComponent<Text> ();
+
+		return null;
+	}
+		
+	RoomInformation Random_InletOutlet(RoomInformation roomInformation){
+
+
+
+		return roomInformation;
+	}
+
+	private void OutputDeltaVelocityData(){
+
+		StreamWriter sw;
+		FileInfo fi;
+		fi = new FileInfo(Application.dataPath + "/DeltaVelocity.csv");
+		sw = fi.AppendText();
+
+
+		sw.WriteLine("Time , DeltaVelocity");
+
+		foreach (DeltaVelocityData data in deltaVelocityDataList) {
+			string str = data.timeStamp.ToString () + "," + data.absVelocity.ToString();
+			sw.WriteLine (str);
+		}
+			
+		sw.Flush();
+		sw.Close();
+
+	}
 
     void Update()
     {
 
+		if (endFlag == true) {
+			return;
+		}
+
         if (Input.GetKeyDown(KeyCode.A))
         {
-            DebugLog();
+			//DebugLog();
+			OutputDeltaVelocityData ();
         }
 
         // step1
@@ -142,6 +207,17 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
         // 描画更新.
         DrawVelocity();
+
+		// グラフ生成用.
+		if (currentTime >= nextTime){
+			Save_DeltaVelocityData ();
+			nextTime = currentTime + coolTime;
+		}
+
+		if (currentTime >= 500.0f) {
+			endFlag = true;
+			OutputDeltaVelocityData ();
+		}
 
 		currentTime += deltaT;
 		TimeText.text = "Time:" + currentTime.ToString("F1");
@@ -627,6 +703,37 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
         return Instantiate(roomPrefab);
     }
 
+	public float oldSumVelocity;
+
+	/// <summary>
+	/// 各ポイントの速度の総和の絶対値保存する
+	/// </summary>
+	private void Save_DeltaVelocityData(){
+
+		float currentSumVelocity = 0.0f;
+		float deltaVelocity;
+
+		for (int Y = 0; Y < ROOM_MAX_Y; Y++)
+		{
+			for (int X = 0; X < ROOM_MAX_X; X++)
+			{
+				PhysicsRoom currentRoom = rooms[Y][X].GetComponent<PhysicsRoom>();
+
+				currentSumVelocity += currentRoom.velocity.magnitude;
+			}
+		}
+
+		deltaVelocity = Mathf.Abs(oldSumVelocity - currentSumVelocity);
+
+		oldSumVelocity = currentSumVelocity;
+
+		DeltaVelocityData currentDeltaVelocityData = new DeltaVelocityData ();
+		currentDeltaVelocityData.absVelocity = deltaVelocity;
+		currentDeltaVelocityData.timeStamp = (int)currentTime;
+
+		deltaVelocityDataList.Add (currentDeltaVelocityData);
+	}
+		
     private void DrawVelocity()
     {
 

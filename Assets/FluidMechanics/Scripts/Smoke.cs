@@ -31,7 +31,7 @@ public class Smoke : MonoBehaviour {
 
 	void Update(){
 
-
+		/*
 		velocity += ((affectWind - velocity) * k / 1.0f) * deltaT;
 		//velocity = windSpeed;
 
@@ -39,10 +39,10 @@ public class Smoke : MonoBehaviour {
 		//f_vector = Vector3.zero;
 
 		myPhysics.MovePosition (transform.position + velocity + f_vector);
-
+		*/
 
 	}
-    
+		    
 	public void UpdateVelocity(Vector3 windSpeed)
     {
 
@@ -53,7 +53,9 @@ public class Smoke : MonoBehaviour {
 		Vector3 f_vector = new Vector3 (Random.Range (f_Min, f_Max), Random.Range (f_Min, f_Max), 0.0f);
 		//f_vector = Vector3.zero;
 
-		myPhysics.MovePosition (transform.position + velocity + f_vector);
+		myPhysics.velocity = velocity;
+		//myPhysics.MovePosition (transform.position + velocity + f_vector);
+
 
     }
 

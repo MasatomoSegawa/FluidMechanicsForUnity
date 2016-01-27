@@ -82,7 +82,6 @@ public class PhysicsRoom : MonoBehaviour {
         if(other.tag == "Smoke")
         {
 			Smoke smoke = other.GetComponent<Smoke>();
-			smoke.Test (velocity);
 
         }
 
@@ -93,9 +92,9 @@ public class PhysicsRoom : MonoBehaviour {
 
         if (other.tag == "Smoke")
         {
-			Debug.Log (velocity);
-			//Smoke smoke = other.GetComponent<Smoke>();
-			//smoke.UpdateVelocity(velocity);
+			//Debug.Log (velocity);
+			Smoke smoke = other.GetComponent<Smoke>();
+			smoke.UpdateVelocity(velocity);
 
         }
 
