@@ -160,16 +160,23 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 		StreamWriter sw;
 		FileInfo fi;
-		fi = new FileInfo(Application.dataPath + "/DeltaVelocity.csv");
+		fi = new FileInfo(Application.dataPath + "/Data/" + roomLevelTextAsset.name + "_DeltaVelocityData.csv");
 		sw = fi.AppendText();
 
+        Debug.Log(Application.dataPath + "/DeltaVelocity.csv");
 
-		sw.WriteLine("Time , DeltaVelocity");
+        sw.WriteLine(roomLevelTextAsset.text);
+        sw.WriteLine("Time , DeltaVelocity");
 
+        int max = deltaVelocityDataList.Count;
+        int count =0;
 		foreach (DeltaVelocityData data in deltaVelocityDataList) {
 			string str = data.timeStamp.ToString () + "," + data.absVelocity.ToString();
 			sw.WriteLine (str);
+            Debug.Log((++count).ToString() + "/" + max.ToString());
+            Debug.Log(str);
 		}
+        Debug.Log("OutputComplete");
 			
 		sw.Flush();
 		sw.Close();
@@ -360,7 +367,10 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 		// タバコオブジェクトを取得.
 		tabaccoObject = GameObject.FindGameObjectWithTag ("Tabacco");
-		tabaccoObject.GetComponent<Tabacco> ().StartExtractSmoke ();
+        if (tabaccoObject != null)
+        {
+            tabaccoObject.GetComponent<Tabacco>().StartExtractSmoke();
+        }
 
     }
 

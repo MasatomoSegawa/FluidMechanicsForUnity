@@ -113,7 +113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b016fb9ee877c1408ecc23398ee6c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomLevelTextAsset: {fileID: 4900000, guid: f49e4a693141241e8889d03a39ab051e, type: 3}
+  roomLevelTextAsset: {fileID: 4900000, guid: 4d353173c998e3a49817ddd696848b45, type: 3}
   ROOM_MAX_X: 16
   ROOM_MAX_Y: 16
   roomPrefab: {fileID: 155242, guid: 32ce65ab3c8da26438fe1acbf42493d4, type: 2}

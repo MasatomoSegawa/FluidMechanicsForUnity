@@ -168,22 +168,22 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 					roomObject = Instantiate (outLetRoomPrefab);
 					break;
 
-				case "←":
+				case "L":
 					roomObject = Instantiate (inLetRoomPrefab);
 					roomObject.GetComponent<PhysicsRoom> ().constantVelocity = new Vector2 (1.0f, 0.0f);
 					break;
 
-				case "→":
+				case "R":
 					roomObject = Instantiate (inLetRoomPrefab);
 					roomObject.GetComponent<PhysicsRoom> ().constantVelocity = new Vector2 (-1.0f, 0.0f);
 					break;
 
-				case "↓":
+				case "D":
 					roomObject = Instantiate (inLetRoomPrefab);
 					roomObject.GetComponent<PhysicsRoom> ().constantVelocity = new Vector2 (0.0f, -1.0f);
 					break;
 
-				case "↑":
+				case "U":
 					roomObject = Instantiate (inLetRoomPrefab);
 					roomObject.GetComponent<PhysicsRoom> ().constantVelocity = new Vector2 (0.0f, 1.0f);
 					break;
