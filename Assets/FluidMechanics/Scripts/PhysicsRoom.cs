@@ -75,17 +75,20 @@ public class PhysicsRoom : MonoBehaviour {
 
 
     }
-	
+
+	/*
     void OnTriggerEnter2D(Collider2D other)
     {
         
         if(other.tag == "Smoke")
         {
 			Smoke smoke = other.GetComponent<Smoke>();
+			smoke.UpdateVelocity(velocity);
 
         }
 
     }
+
 
     void OnTriggerStay2D(Collider2D other)
     {
@@ -98,6 +101,6 @@ public class PhysicsRoom : MonoBehaviour {
 
         }
 
-    }
+    }*/
 
 }

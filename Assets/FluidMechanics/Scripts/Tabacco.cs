@@ -51,7 +51,7 @@ public class Tabacco : MonoBehaviour {
 		//* Quaternion.AngleAxis (Random.Range (-extractRangeTheta, extractRangeTheta), Vector3.up);
 
 		// 初期速度の初期化.
-		smokeObject.GetComponent<Smoke> ().velocity = direction.normalized * initSmokeOfSpeed;
+		smokeObject.GetComponent<Smoke> ().GetComponent<Rigidbody2D>().velocity = direction.normalized * initSmokeOfSpeed;
 
 		currentExtractedNumber++;
 	}

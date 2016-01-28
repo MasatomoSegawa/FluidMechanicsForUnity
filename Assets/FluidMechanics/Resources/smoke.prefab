@@ -75,9 +75,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0, z: 0}
   myPhysics: {fileID: 0}
-  k: 0.1
+  k: 0.16
   f_Max: 0.00005
   f_Min: -0.00005
+  windSpeed: {x: 0, y: 0, z: 0}
 --- !u!212 &21263326
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -137,7 +138,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: k
-      value: 0.1
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: t
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

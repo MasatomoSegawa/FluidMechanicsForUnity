@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class Smoke : MonoBehaviour {
 
 	private Vector3 affectWind;
-
-	public Vector3 velocity;
 
     public Rigidbody2D myPhysics;
 
@@ -16,6 +15,11 @@ public class Smoke : MonoBehaviour {
 
 	private float deltaT;
 
+	public Vector2 windSpeed;
+
+	public Vector2 currentVelocity;
+
+
     void Start()
     {
         myPhysics = GetComponent<Rigidbody2D>();
@@ -24,44 +28,42 @@ public class Smoke : MonoBehaviour {
 
     }
 
-	public void Test(Vector3 wind){
-		affectWind = wind;
-
-	}
-
 	void Update(){
 
-		/*
-		velocity += ((affectWind - velocity) * k / 1.0f) * deltaT;
-		//velocity = windSpeed;
+		myPhysics.velocity += ((windSpeed - myPhysics.velocity) * k);
 
-		Vector3 f_vector = new Vector3 (Random.Range (f_Min, f_Max), Random.Range (f_Min, f_Max), 0.0f);
-		//f_vector = Vector3.zero;
+		currentVelocity = myPhysics.velocity;
+	}
+		
+	void LateUpdate(){
+		windSpeed = Vector3.zero;
+	}
 
-		myPhysics.MovePosition (transform.position + velocity + f_vector);
-		*/
+	void OnTriggerEnter2D(Collider2D other)
+	{
+	
+		if (other.GetComponent<PhysicsRoom> () != null) {
+			Vector3 wind = other.GetComponent<PhysicsRoom> ().velocity;
+			this.windSpeed += new Vector2 (-wind.x, wind.y);
+		}
 
 	}
 		    
-	public void UpdateVelocity(Vector3 windSpeed)
-    {
+	void OnTriggerStay2D(Collider2D other)
+	{
+	
+		if (other.GetComponent<PhysicsRoom> () != null) {
+			Vector3 wind = other.GetComponent<PhysicsRoom> ().velocity;
+			this.windSpeed += new Vector2 (-wind.x, wind.y);
+		}
+			
+	}
 
-
-		velocity += ((windSpeed - velocity) * k / 1.0f) * deltaT;
-		//velocity = windSpeed;
-
-		Vector3 f_vector = new Vector3 (Random.Range (f_Min, f_Max), Random.Range (f_Min, f_Max), 0.0f);
-		//f_vector = Vector3.zero;
-
-		myPhysics.velocity = velocity;
-		//myPhysics.MovePosition (transform.position + velocity + f_vector);
-
-
-    }
-
+	/*
 	void OnDrawGizmos(){
 
-		Vector3 direction = velocity.normalized;
+
+		Vector2 direction = velocity.normalized;
 		float length = 5.0f;
 
 		//Debug.Log (transform.position + direction * length);
@@ -69,6 +71,6 @@ public class Smoke : MonoBehaviour {
 		Gizmos.color = Color.red;
 		Gizmos.DrawLine (transform.position, transform.position + direction * length);
 
-	}
+	}*/
 
 }

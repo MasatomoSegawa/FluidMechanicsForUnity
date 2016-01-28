@@ -252,10 +252,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   extractRangeTheta: 50
-  initSmokeOfSpeed: 0.0001
+  initSmokeOfSpeed: 6
   smoke: {fileID: 119406, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
   extractDuration: 1.5
-  maxExtractNumber: 10
+  maxExtractNumber: 100
 --- !u!212 &21209036
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -483,11 +483,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: initSmokeOfSpeed
-      value: 0.0001
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: maxExtractNumber
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

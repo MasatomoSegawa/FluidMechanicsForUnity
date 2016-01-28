@@ -110,6 +110,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 	private float coolTime = 1.0f;
 	private float nextTime;
 	private bool endFlag = false;
+	private float loopTimeMax = 100.0f;
 
     #endregion
 
