@@ -130,6 +130,7 @@ MonoBehaviour:
   maxPrs0: 1
   minPrs0: -0.4
   deltaVelocityDataList: []
+  OneLoopTimeForSimulation: 10
   oldSumVelocity: 0
 --- !u!4 &535448922
 Transform:

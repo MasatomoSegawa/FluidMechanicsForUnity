@@ -15,6 +15,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 	#region Utility
 	[Header("流体ルーム用のTextAsset")]
 	public TextAsset roomLevelTextAsset;
+	public TextAsset[] roomLevelTextAssetList;
 	#endregion
 
     #region 描画用の変数
@@ -112,6 +113,8 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 	private bool endFlag = false;
 	private float loopTimeMax = 100.0f;
 
+	public float OneLoopTimeForSimulation = 10.0f;
+
     #endregion
 
     #region Unityライフサイクル.
@@ -121,6 +124,9 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 		deltaVelocityDataList = new List<DeltaVelocityData> ();
 
+		TimeText = GameObject.Find ("TimeText").GetComponent<Text> ();
+
+		/*
 		PhysicsRoomLevelImportor physicsRoomLevelImportor = GetComponent<PhysicsRoomLevelImportor> ();
 		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation (roomLevelTextAsset.name);
 	
@@ -131,32 +137,59 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		TimeText = GameObject.Find ("TimeText").GetComponent<Text> ();
 
 		nextTime = coolTime + Time.time;
+		*/
+
+		endFlag = false;
+
+		StartCoroutine (StartSimulation());
     }
 
 	IEnumerator StartSimulation(){
 
 		PhysicsRoomLevelImportor physicsRoomLevelImportor = GetComponent<PhysicsRoomLevelImportor> ();
-		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation (roomLevelTextAsset.name);
 
-		// ルームのInLet/Outletの全てのパターンを試して,
-		// タバコの粒子の煙が少ないパターンを得る.
+		foreach (TextAsset textAsset in roomLevelTextAssetList) {
+			//RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation (roomLevelTextAsset.name);
+			//RoomInformation initRoomInformation = physicsRoomLevelImportor.Get_NoOutletInlet_RoomInformation (roomLevelTextAsset.name);
+			RoomInformation initRoomInformation = physicsRoomLevelImportor.Get_NoOutletInlet_RoomInformation (textAsset.name);
 
-		InitPhysicsRooms (roomInformation);
+			RoomInformation currentRoomInformation = initRoomInformation;
+			// ルームのInLet/Outletの全てのパターンを試して,
+			// タバコの粒子の煙が少ないパターンを得る.
+			for (int InLet = 1; InLet < initRoomInformation.ROOM_MAX_Y - 1; InLet++) {
+				for (int OutLet = 1; OutLet < initRoomInformation.ROOM_MAX_Y - 1; OutLet++) {
+					currentRoomInformation = 
+					physicsRoomLevelImportor.Get_Random_OutletInlet_RoomInformation (initRoomInformation, InLet, OutLet);
 
-		InitData();
+					InitPhysicsRooms (currentRoomInformation);
 
-		TimeText = GameObject.Find ("TimeText").GetComponent<Text> ();
+					InitData ();
 
-		return null;
+					yield return new WaitWhile (() => endFlag == false);
+
+					endFlag = false;
+
+					OutPutSmokeData (currentRoomInformation);
+
+				}
+			}
+
+			Debug.Log (textAsset.name + " is End!");
+		}
+			
+		yield break;
 	}
-		
-	RoomInformation Random_InletOutlet(RoomInformation roomInformation){
 
+	/// <summary>
+	/// データを取得してcsvにして保存する関数.
+	/// </summary>
+	/// <param name="currentRoomInformation">Current room information.</param>
+	private void OutPutSmokeData(RoomInformation currentRoomInformation){
 
+		Debug.Log ("('A')");
 
-		return roomInformation;
 	}
-
+				
 	private void OutputDeltaVelocityData(){
 
 		StreamWriter sw;
@@ -216,6 +249,12 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
         // 描画更新.
         DrawVelocity();
 
+		if (currentTime >= OneLoopTimeForSimulation) {
+			endFlag = true;
+			//OutputDeltaVelocityData ();
+		}
+
+		/*
 		// グラフ生成用.
 		if (currentTime >= nextTime){
 			Save_DeltaVelocityData ();
@@ -226,6 +265,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 			endFlag = true;
 			OutputDeltaVelocityData ();
 		}
+		*/
 
 		currentTime += deltaT;
 		TimeText.text = "Time:" + currentTime.ToString("F1");
@@ -373,6 +413,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
             tabaccoObject.GetComponent<Tabacco>().StartExtractSmoke();
         }
 
+		currentTime = 0.0f;
     }
 
     #endregion
