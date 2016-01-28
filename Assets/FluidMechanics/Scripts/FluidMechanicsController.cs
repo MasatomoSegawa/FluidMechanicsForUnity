@@ -4,6 +4,17 @@ using System.Collections.Generic;
 using System.Collections;
 using System.IO;
 
+//% #out #in #p(t = a秒) #OutPosition #InPosition
+
+[System.Serializable]
+public struct RoomData{
+	public int OutLetNumber;
+	public int InLetNumber;
+	public int ParticleNumber;
+	public Vector2Int[] OutPositions;
+	public Vector2Int[] InPositions;
+}
+
 [System.Serializable]
 public struct DeltaVelocityData{
 	public float absVelocity;
@@ -108,6 +119,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 	private GameObject tabaccoObject;
 
 	public List<DeltaVelocityData> deltaVelocityDataList;
+	public List<RoomData> roomDataList;
 	private float coolTime = 1.0f;
 	private float nextTime;
 	private bool endFlag = false;
@@ -153,13 +165,16 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 			//RoomInformation initRoomInformation = physicsRoomLevelImportor.Get_NoOutletInlet_RoomInformation (roomLevelTextAsset.name);
 			RoomInformation initRoomInformation = physicsRoomLevelImportor.Get_NoOutletInlet_RoomInformation (textAsset.name);
 
+			// Data入れるリスト初期化.
+			roomDataList = new List<RoomData> ();
+
 			RoomInformation currentRoomInformation = initRoomInformation;
 			// ルームのInLet/Outletの全てのパターンを試して,
 			// タバコの粒子の煙が少ないパターンを得る.
 			for (int InLet = 1; InLet < initRoomInformation.ROOM_MAX_Y - 1; InLet++) {
 				for (int OutLet = 1; OutLet < initRoomInformation.ROOM_MAX_Y - 1; OutLet++) {
 					currentRoomInformation = 
-					physicsRoomLevelImportor.Get_Random_OutletInlet_RoomInformation (initRoomInformation, InLet, OutLet);
+						physicsRoomLevelImportor.Get_Random_OutletInlet_RoomInformation (textAsset.name,initRoomInformation, InLet, OutLet);
 
 					InitPhysicsRooms (currentRoomInformation);
 
@@ -169,10 +184,21 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 					endFlag = false;
 
-					OutPutSmokeData (currentRoomInformation);
+					//一度終わる毎にRoomDataにデータを追加.
+					RoomData newRoomData = new RoomData ();
+					newRoomData.InLetNumber = InLet;
+					newRoomData.OutLetNumber = OutLet;
+					newRoomData.ParticleNumber = GetSmokeNumber ();
+					newRoomData.InPositions = currentRoomInformation.inletPositions;
+					newRoomData.OutPositions = currentRoomInformation.outletPostions;
+
+					roomDataList.Add (newRoomData);
+					//OutPutSmokeData (currentRoomInformation);
 
 				}
 			}
+
+			OutPutSmokeData (currentRoomInformation);
 
 			Debug.Log (textAsset.name + " is End!");
 		}
@@ -180,13 +206,66 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		yield break;
 	}
 
+	private int GetSmokeNumber(){
+		GameObject[] safeArias = GameObject.FindGameObjectsWithTag ("SafeAria");
+
+		int smokeCount = 0;
+		foreach(GameObject safeAria in safeArias){
+
+			BoxCollider2D boxCollider = safeAria.GetComponent<BoxCollider2D> ();
+			Collider2D[] targets = Physics2D.OverlapAreaAll(boxCollider.bounds.min,boxCollider.bounds.max);
+			List<GameObject> smokeObjectList = new List<GameObject> ();
+
+			foreach (Collider2D target in targets) {
+				if (target.tag == "Smoke" && smokeObjectList.Contains(target.gameObject) == false) {
+					smokeObjectList.Add (target.gameObject);
+					smokeCount++;
+				}
+			}
+
+		}
+
+		return smokeCount;
+	}
+
 	/// <summary>
 	/// データを取得してcsvにして保存する関数.
 	/// </summary>
 	/// <param name="currentRoomInformation">Current room information.</param>
 	private void OutPutSmokeData(RoomInformation currentRoomInformation){
+	
+		StreamWriter sw;
+		FileInfo fi;
+		fi = new FileInfo(Application.dataPath + "/Data/" + roomLevelTextAsset.name + "_data.csv");
+		sw = fi.AppendText();
 
-		Debug.Log ("('A')");
+		sw.WriteLine(roomLevelTextAsset.text);
+		sw.WriteLine("OutNumber , InNumber , ParticleNumber , OutPosition, InPosition");
+
+		int max = roomDataList.Count;
+		int count = 0;
+		foreach (RoomData data in roomDataList) {
+			string str = data.InLetNumber.ToString () + "," + data.OutLetNumber.ToString() + 
+			             data.ParticleNumber.ToString() + ",";
+
+			for (int i = 0; i < data.InLetNumber; i++) {
+				str += "(" + data.InPositions [i].x + "," + data.InPositions [i].y + ") - ";
+			}
+
+			str += ",";
+
+			for (int i = 0; i < data.OutLetNumber; i++) {
+				str += "(" + data.OutPositions [i].x + "," + data.OutPositions [i].y + ") - ";
+			}
+						
+			sw.WriteLine (str);
+			Debug.Log((++count).ToString() + "/" + max.ToString());
+			Debug.Log(str);
+		}
+		Debug.Log("OutputComplete");
+
+		sw.Flush();
+		sw.Close();
 
 	}
 				
