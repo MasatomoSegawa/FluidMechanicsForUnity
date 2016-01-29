@@ -490,7 +490,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
         if (tabaccoObject != null)
         {
             tabaccoObject.GetComponent<Tabacco>().StartExtractSmoke();
-            Debug.Log("uhun");
+			//Debug.Log("uhun");
         }
 
 		currentTime = 0.0f;

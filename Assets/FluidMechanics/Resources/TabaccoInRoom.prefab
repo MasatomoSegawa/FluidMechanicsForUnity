@@ -80,7 +80,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &150210
 GameObject:
   m_ObjectHideFlags: 0
@@ -255,14 +255,17 @@ MonoBehaviour:
   initSmokeOfSpeed: 6
   smoke: {fileID: 119406, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
   extractDuration: 2
+  isExtractSmoke: 1
+  nextTime: 0
   maxExtractNumber: 100
+  currentExtractedNumber: 0
 --- !u!212 &21209036
 SpriteRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 141106}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_Materials:
@@ -492,6 +495,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: extractDuration
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -31,17 +31,17 @@ public class Tabacco : MonoBehaviour {
 
 		nextTime = Time.time;
 
-        Debug.Log("test");
+		//  Debug.Log("test");
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        Debug.Log(isExtractSmoke);
+		// Debug.Log(isExtractSmoke);
 		if (isExtractSmoke == true && nextTime + extractDuration <= Time.time && currentExtractedNumber < maxExtractNumber) {
 			nextTime = Time.time + extractDuration;
 			ExtractSmoke ();
-            Debug.Log("yes");
+			//Debug.Log("yes");
 		}
 
 	}
