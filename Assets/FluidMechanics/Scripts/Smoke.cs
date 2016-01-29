@@ -30,9 +30,18 @@ public class Smoke : MonoBehaviour {
 
 	void Update(){
 
-		myPhysics.velocity += ((windSpeed - myPhysics.velocity) * k);
+        if (!float.IsNaN(myPhysics.velocity.x) && !float.IsNaN(myPhysics.velocity.y))
+        { 
 
-		currentVelocity = myPhysics.velocity;
+            Vector2 temp = ((windSpeed - myPhysics.velocity) * k);
+            if (!float.IsNaN(temp.x) && !float.IsNaN(temp.y))
+            {
+                myPhysics.velocity += ((windSpeed - myPhysics.velocity) * k);
+
+
+                currentVelocity = myPhysics.velocity;
+            }
+        }
 	}
 		
 	void LateUpdate(){
@@ -44,7 +53,7 @@ public class Smoke : MonoBehaviour {
 	
 		if (other.GetComponent<PhysicsRoom> () != null) {
 			Vector3 wind = other.GetComponent<PhysicsRoom> ().velocity;
-			this.windSpeed += new Vector2 (-wind.x, wind.y);
+			this.windSpeed += new Vector2 (wind.x, wind.y);
 		}
 
 	}
@@ -54,7 +63,7 @@ public class Smoke : MonoBehaviour {
 	
 		if (other.GetComponent<PhysicsRoom> () != null) {
 			Vector3 wind = other.GetComponent<PhysicsRoom> ().velocity;
-			this.windSpeed += new Vector2 (-wind.x, wind.y);
+			this.windSpeed += new Vector2 (wind.x, wind.y);
 		}
 			
 	}

@@ -174,7 +174,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 			for (int InLet = 1; InLet < initRoomInformation.ROOM_MAX_Y - 1; InLet++) {
 				for (int OutLet = 1; OutLet < initRoomInformation.ROOM_MAX_Y - 1; OutLet++) {
 					currentRoomInformation = 
-						physicsRoomLevelImportor.Get_Random_OutletInlet_RoomInformation (textAsset.name,initRoomInformation, InLet, OutLet);
+						physicsRoomLevelImportor.Get_Random_OutletInlet_RoomInformation (textAsset.name,initRoomInformation, OutLet, InLet);
 
 					InitPhysicsRooms (currentRoomInformation);
 
@@ -198,7 +198,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 				}
 			}
 
-			OutPutSmokeData (currentRoomInformation);
+			OutPutSmokeData (currentRoomInformation, textAsset.name);
 
 			Debug.Log (textAsset.name + " is End!");
 		}
@@ -232,11 +232,11 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 	/// データを取得してcsvにして保存する関数.
 	/// </summary>
 	/// <param name="currentRoomInformation">Current room information.</param>
-	private void OutPutSmokeData(RoomInformation currentRoomInformation){
+	private void OutPutSmokeData(RoomInformation currentRoomInformation,string Assetname){
 	
 		StreamWriter sw;
 		FileInfo fi;
-		fi = new FileInfo(Application.dataPath + "/Data/" + roomLevelTextAsset.name + "_data.csv");
+		fi = new FileInfo(Application.dataPath + "/Data/" + Assetname + "_data.csv");
 		sw = fi.AppendText();
 
 		sw.WriteLine(roomLevelTextAsset.text);
@@ -246,7 +246,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		int count = 0;
 		foreach (RoomData data in roomDataList) {
 			string str = data.InLetNumber.ToString () + "," + data.OutLetNumber.ToString() + 
-			             data.ParticleNumber.ToString() + ",";
+			             "," + data.ParticleNumber.ToString() + ",";
 
 			for (int i = 0; i < data.InLetNumber; i++) {
 				str += "(" + data.InPositions [i].x + "," + data.InPositions [i].y + ") - ";
@@ -490,6 +490,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
         if (tabaccoObject != null)
         {
             tabaccoObject.GetComponent<Tabacco>().StartExtractSmoke();
+            Debug.Log("uhun");
         }
 
 		currentTime = 0.0f;

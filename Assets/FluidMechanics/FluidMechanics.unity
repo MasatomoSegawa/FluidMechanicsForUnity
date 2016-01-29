@@ -128,7 +128,7 @@ MonoBehaviour:
   DX: 1
   DY: 1
   Re: 1000
-  deltaT: 0.01
+  deltaT: 0.05
   maxPsi0: 0.02
   minPsi0: -0.1
   maxOmg0: 20
@@ -137,7 +137,7 @@ MonoBehaviour:
   minPrs0: -0.4
   deltaVelocityDataList: []
   roomDataList: []
-  OneLoopTimeForSimulation: 2
+  OneLoopTimeForSimulation: 200
   oldSumVelocity: 0
 --- !u!4 &535448922
 Transform:

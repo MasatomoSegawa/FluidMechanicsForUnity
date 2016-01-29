@@ -33,10 +33,22 @@ public class PhysicsRoom : MonoBehaviour {
 				arrowSprite.transform.localScale = new Vector2(newScale, 1.0f);
 			}
 
-			// 角度の更新.
-			arrowSprite.transform.rotation = Quaternion.AngleAxis (angle, new Vector3 (0.0f, 0.0f, 1.0f));
+
+            if (!float.IsNaN(transform.rotation.x) && !float.IsNaN(transform.rotation.y) && !float.IsNaN(transform.rotation.z))
+            {
+                //Do stuff
+
+                Quaternion temp = Quaternion.AngleAxis(angle, new Vector3(0.0f, 0.0f, 1.0f));
+
+                if (!float.IsNaN(temp.x) && !float.IsNaN(temp.y) && !float.IsNaN(temp.z))
+                {
 
 
+                    // 角度の更新.
+                    arrowSprite.transform.rotation = Quaternion.AngleAxis(angle, new Vector3(0.0f, 0.0f, 1.0f));
+                }
+
+            }
 
 		}
 

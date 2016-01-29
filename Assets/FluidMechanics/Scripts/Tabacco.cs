@@ -11,13 +11,13 @@ public class Tabacco : MonoBehaviour {
 	[Header("排出のタイミング")]
 	public float extractDuration;
 
-	private bool isExtractSmoke = false;
-	private float nextTime;
+	public bool isExtractSmoke = true;
+	public float nextTime;
 
 	[Header("最大排出数")]
 	public int maxExtractNumber = 20;
 
-	private int currentExtractedNumber = 0;
+	public int currentExtractedNumber = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -30,14 +30,18 @@ public class Tabacco : MonoBehaviour {
 		isExtractSmoke = true;
 
 		nextTime = Time.time;
+
+        Debug.Log("test");
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+
+        Debug.Log(isExtractSmoke);
 		if (isExtractSmoke == true && nextTime + extractDuration <= Time.time && currentExtractedNumber < maxExtractNumber) {
 			nextTime = Time.time + extractDuration;
 			ExtractSmoke ();
+            Debug.Log("yes");
 		}
 
 	}
