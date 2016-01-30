@@ -13,6 +13,7 @@ public struct RoomData{
 	public int ParticleNumber;
 	public Vector2Int[] OutPositions;
 	public Vector2Int[] InPositions;
+    public int ParticleNumberInAll;
 }
 
 [System.Serializable]
@@ -188,9 +189,10 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 					RoomData newRoomData = new RoomData ();
 					newRoomData.InLetNumber = InLet;
 					newRoomData.OutLetNumber = OutLet;
-					newRoomData.ParticleNumber = GetSmokeNumber ();
+					newRoomData.ParticleNumber = GetSmokeNumberInSafeAria ();
 					newRoomData.InPositions = currentRoomInformation.inletPositions;
 					newRoomData.OutPositions = currentRoomInformation.outletPostions;
+                    newRoomData.ParticleNumberInAll = GetSmokeNmber();
 
 					roomDataList.Add (newRoomData);
 					//OutPutSmokeData (currentRoomInformation);
@@ -206,7 +208,14 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		yield break;
 	}
 
-	private int GetSmokeNumber(){
+    private int GetSmokeNmber()
+    {
+
+        return GameObject.FindGameObjectsWithTag("Smoke").Length;
+
+    }
+
+	private int GetSmokeNumberInSafeAria(){
 		GameObject[] safeArias = GameObject.FindGameObjectsWithTag ("SafeAria");
 
 		int smokeCount = 0;
@@ -240,13 +249,13 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		sw = fi.AppendText();
 
 		sw.WriteLine(roomLevelTextAsset.text);
-		sw.WriteLine("OutNumber , InNumber , ParticleNumber , OutPosition, InPosition");
+		sw.WriteLine("OutNumber , InNumber , ParticleNumberInSafeAria , AllParticleNumber, OutPosition, InPosition");
 
 		int max = roomDataList.Count;
 		int count = 0;
 		foreach (RoomData data in roomDataList) {
 			string str = data.InLetNumber.ToString () + "," + data.OutLetNumber.ToString() + 
-			             "," + data.ParticleNumber.ToString() + ",";
+			             "," + data.ParticleNumber.ToString() + "," + data.ParticleNumberInAll.ToString();
 
 			for (int i = 0; i < data.InLetNumber; i++) {
 				str += "(" + data.InPositions [i].x + "," + data.InPositions [i].y + ") - ";

@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 443974}
   - 212: {fileID: 21254210}
   - 114: {fileID: 11422474}
+  - 61: {fileID: 6103238}
   m_Layer: 0
   m_Name: InLet
   m_TagString: Untagged
@@ -24,11 +25,25 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 169116}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.89061737, y: 2.92190766, z: 0}
-  m_LocalScale: {x: .25, y: .25, z: 1}
+  m_LocalPosition: {x: -5.8906174, y: 2.9219077, z: 0}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!61 &6103238
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 169116}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Size: {x: 11.74, y: 11.81}
 --- !u!114 &11422474
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -45,10 +60,12 @@ MonoBehaviour:
   arrowSprite: {fileID: 0}
   scale: 0
   myType: 2
+  constantVelocity: {x: 0, y: 0}
   Left: 0
   Right: 0
   Up: 0
   Down: 0
+  mag: 0
 --- !u!212 &21254210
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -67,14 +84,18 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_AutoUVMaxDistance: .5
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 3826f29218ac7426da73bfa23c46a35b, type: 3}
-  m_Color: {r: .145977467, g: .712370098, b: .992647052, a: 1}
+  m_Color: {r: 0.14597747, g: 0.7123701, b: 0.99264705, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -85,6 +106,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: myType
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

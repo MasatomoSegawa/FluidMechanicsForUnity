@@ -36,7 +36,7 @@ public class Smoke : MonoBehaviour {
             Vector2 temp = ((windSpeed - myPhysics.velocity) * k);
             if (!float.IsNaN(temp.x) && !float.IsNaN(temp.y))
             {
-                myPhysics.velocity += ((windSpeed - myPhysics.velocity) * k);
+                myPhysics.velocity += ((windSpeed - myPhysics.velocity) * k) * deltaT;
 
 
                 currentVelocity = myPhysics.velocity;

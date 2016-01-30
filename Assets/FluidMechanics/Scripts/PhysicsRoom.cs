@@ -1,26 +1,27 @@
 ﻿using UnityEngine;
 
-public class PhysicsRoom : MonoBehaviour {
+public class PhysicsRoom : MonoBehaviour
+{
 
     public Vector2 velocity;
     public float presser;
     public GameObject arrowSprite;
     public float scale;
-	public RoomType myType;
+    public RoomType myType;
 
-	public Vector2 constantVelocity;
+    public Vector2 constantVelocity;
 
     public float Left;
     public float Right;
     public float Up;
     public float Down;
 
-	public void UpdateVelocity(float VelX, float VelY)
-	{
+    public void UpdateVelocity(float VelX, float VelY)
+    {
 
-		velocity = new Vector2(VelX, VelY);
+        velocity = new Vector2(VelX, VelY);
 
-		/*
+        /*
 		if (myType == RoomType.Normal)
 		{
 
@@ -56,57 +57,58 @@ public class PhysicsRoom : MonoBehaviour {
 		}*/
 
 
-	}
+    }
 
-	public float mag;
-	Vector2 LeftSideVelocity, RightSideVelocity, UpSideVelocity, DownSideVelocity;
+    public float mag;
+    Vector2 LeftSideVelocity, RightSideVelocity, UpSideVelocity, DownSideVelocity;
 
-	void OnDrawGizmos(){
-
-		Vector3 direction = velocity.normalized;
-		Vector3 rightDirection = RightSideVelocity.normalized;
-		Vector3 leftDirection = LeftSideVelocity.normalized;
-		Vector3 upDirection = UpSideVelocity.normalized;
-		Vector3 downDirection = DownSideVelocity.normalized;
-		float length = Mathf.Clamp(velocity.magnitude, 1.0f, 2.5f);
-
-		//Debug.Log (transform.position + direction * length);
-
-		Gizmos.color = Color.red;
-		Gizmos.DrawLine (transform.position, transform.position + direction * length);
-		Gizmos.DrawCube (transform.position + direction * length, new Vector3 (0.3f, 0.3f, 0.0f));
-
-		Gizmos.color = Color.blue;
-		// 左
-		Gizmos.DrawLine (transform.position - Vector3.left * 2.935f, 
-			transform.position - Vector3.left * 2.935f + Vector3.right * Left * 2.0f);
-		//Gizmos.DrawCube (transform.position + direction * length, new Vector3 (0.3f, 0.3f, 0.0f));
-	}
-
-    public void UpdateVelocity(float left,float right, float up, float down,float VelX, float VelY)
+    void OnDrawGizmos()
     {
 
-		Debug.Log ("?");
-		Debug.Log (left);
-			
+        Vector3 direction = velocity.normalized;
+        Vector3 rightDirection = RightSideVelocity.normalized;
+        Vector3 leftDirection = LeftSideVelocity.normalized;
+        Vector3 upDirection = UpSideVelocity.normalized;
+        Vector3 downDirection = DownSideVelocity.normalized;
+        float length = Mathf.Clamp(velocity.magnitude, 1.0f, 2.5f);
+
+        //Debug.Log (transform.position + direction * length);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + direction * length);
+        Gizmos.DrawCube(transform.position + direction * length, new Vector3(0.3f, 0.3f, 0.0f));
+
+        Gizmos.color = Color.blue;
+        // 左
+        Gizmos.DrawLine(transform.position - Vector3.left * 2.935f,
+            transform.position - Vector3.left * 2.935f + Vector3.right * Left * 2.0f);
+        //Gizmos.DrawCube (transform.position + direction * length, new Vector3 (0.3f, 0.3f, 0.0f));
+    }
+
+    public void UpdateVelocity(float left, float right, float up, float down, float VelX, float VelY)
+    {
+
+        Debug.Log("?");
+        Debug.Log(left);
+
         Left = left;
         Right = right;
         Up = up;
         Down = down;
 
-		velocity = new Vector2(VelX, VelY);
-		UpSideVelocity = new Vector2 (0.0f, Up);
-		DownSideVelocity = new Vector2 (0.0f, Down);
-		RightSideVelocity = new Vector2 (right, 0.0f);
-		LeftSideVelocity = new Vector2 (left, 0.0f);
+        velocity = new Vector2(VelX, VelY);
+        UpSideVelocity = new Vector2(0.0f, Up);
+        DownSideVelocity = new Vector2(0.0f, Down);
+        RightSideVelocity = new Vector2(right, 0.0f);
+        LeftSideVelocity = new Vector2(left, 0.0f);
 
-		if (myType == RoomType.Normal)
+        if (myType == RoomType.Normal)
         {
-		
-            mag = velocity.sqrMagnitude;
-			float theta = Mathf.Atan2(velocity.normalized.x , velocity.normalized.y);
 
-			/*
+            mag = velocity.sqrMagnitude;
+            float theta = Mathf.Atan2(velocity.normalized.x, velocity.normalized.y);
+
+            /*
 			Quaternion currentQuaternion = Quaternion.AngleAxis(theta, new Vector3(0.0f, 0.0f, -1.0f));
 
             if (mag < 10.0f)
@@ -124,31 +126,15 @@ public class PhysicsRoom : MonoBehaviour {
 
     }
 
-	/*
+
     void OnTriggerEnter2D(Collider2D other)
     {
-        
-        if(other.tag == "Smoke")
-        {
-			Smoke smoke = other.GetComponent<Smoke>();
-			smoke.UpdateVelocity(velocity);
 
+        if (other.tag == "Smoke" && myType == RoomType.OutLet)
+        {
+            Destroy(other.gameObject);
         }
 
     }
-
-
-    void OnTriggerStay2D(Collider2D other)
-    {
-
-        if (other.tag == "Smoke")
-        {
-			//Debug.Log (velocity);
-			Smoke smoke = other.GetComponent<Smoke>();
-			smoke.UpdateVelocity(velocity);
-
-        }
-
-    }*/
 
 }
