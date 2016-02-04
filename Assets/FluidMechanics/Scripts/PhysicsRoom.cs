@@ -21,7 +21,6 @@ public class PhysicsRoom : MonoBehaviour
 
         velocity = new Vector2(VelX, VelY);
 
-        /*
 		if (myType == RoomType.Normal)
 		{
 
@@ -54,7 +53,7 @@ public class PhysicsRoom : MonoBehaviour
 
             }
 
-		}*/
+		}
 
 
     }
@@ -70,7 +69,9 @@ public class PhysicsRoom : MonoBehaviour
         Vector3 leftDirection = LeftSideVelocity.normalized;
         Vector3 upDirection = UpSideVelocity.normalized;
         Vector3 downDirection = DownSideVelocity.normalized;
-        float length = Mathf.Clamp(velocity.magnitude, 1.0f, 2.5f);
+		//float length = Mathf.Clamp(velocity.magnitude, 1.0f, 2.5f);
+		float length = velocity.magnitude * 100.0f;
+		length = Mathf.Clamp (length, 0.0f, 2.0f);
 
         //Debug.Log (transform.position + direction * length);
 
@@ -108,7 +109,6 @@ public class PhysicsRoom : MonoBehaviour
             mag = velocity.sqrMagnitude;
             float theta = Mathf.Atan2(velocity.normalized.x, velocity.normalized.y);
 
-            /*
 			Quaternion currentQuaternion = Quaternion.AngleAxis(theta, new Vector3(0.0f, 0.0f, -1.0f));
 
             if (mag < 10.0f)
@@ -120,7 +120,7 @@ public class PhysicsRoom : MonoBehaviour
 			//arrowSprite.transform.rotation = currentQuaternion;
 
 			arrowSprite.transform.Rotate(new Vector3(0.0f, 0.0f, 1.0f), theta);
-			*/
+
         }
 
 

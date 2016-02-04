@@ -54,6 +54,8 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 
 	const float ROOM_SPRITE_LENGTH = 2.935f;
 
+	public float velocityScale = 1.0f;
+
 	private InletOutletInitPositions RandomNumbers(int XMax ,int YMin, int YMax, int OutletNumber, int InletNumber){
 
 		InletOutletInitPositions inletOutletInitPositions = new InletOutletInitPositions ();
@@ -83,7 +85,6 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 		}
 
         rnd = new System.Random((int)Time.time);
-
 
         cnt = YMax;
         for (int i = 0; i < OutletNumber; i++)
@@ -260,9 +261,9 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 			Vector2Int tmp = inoutPositions.InletPos [i];
 			GameObject roomObject = Instantiate (inLetRoomPrefab);
 			if (tmp.x == 0) {
-				roomObject.GetComponent<PhysicsRoom> ().constantVelocity = Vector2.right;		
+				roomObject.GetComponent<PhysicsRoom> ().constantVelocity = Vector2.right * velocityScale;		
 			} else {
-				roomObject.GetComponent<PhysicsRoom> ().constantVelocity = Vector2.left;		
+				roomObject.GetComponent<PhysicsRoom> ().constantVelocity = Vector2.left * velocityScale;		
 			}
 
 			GameObject old = rooms [tmp.y] [tmp.x];
@@ -279,9 +280,9 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 			Vector2Int tmp = inoutPositions.OutletPos [i];
 			GameObject roomObject = Instantiate (outLetRoomPrefab);
 			if (tmp.x == 0) {
-				roomObject.GetComponent<PhysicsRoom> ().constantVelocity = Vector2.left;		
+				roomObject.GetComponent<PhysicsRoom> ().constantVelocity = Vector2.left * velocityScale;		
 			} else {
-				roomObject.GetComponent<PhysicsRoom> ().constantVelocity = Vector2.right;		
+				roomObject.GetComponent<PhysicsRoom> ().constantVelocity = Vector2.right * velocityScale;		
 			}
 				
 			GameObject old = rooms [tmp.y] [tmp.x];

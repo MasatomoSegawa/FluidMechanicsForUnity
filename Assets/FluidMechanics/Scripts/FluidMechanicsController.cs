@@ -62,10 +62,10 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
     public int iteration = 10;
 
     [Header("デルタX")]
-    public float DX = 10.0f;
+	public float DX;
 
     [Header("デルタY")]
-    public float DY = 10.0f;
+	public float DY;
 
     [Header("レイノルズ数")]
     public float Re = 500.0f;
@@ -128,6 +128,8 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 	public float OneLoopTimeForSimulation = 10.0f;
 
+	public float roomSize;
+
     #endregion
 
     #region Unityライフサイクル.
@@ -181,7 +183,12 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 					InitData ();
 
+					// シミュレーションの更新開始.
+					//StartCoroutine (UpdateSimulator ());
+
 					yield return new WaitWhile (() => endFlag == false);
+
+					//StopCoroutine (UpdateSimulator ());
 
 					endFlag = false;
 
@@ -305,44 +312,36 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 	}
 
-    void Update()
-    {
+	void Update(){
+		Calcurate ();
+	}
 
-		if (endFlag == true) {
-			return;
-		}
+	void Calcurate(){
+		// step1
+		// 境界条件
+		Calculate_Boundarycondition ();
 
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-			//DebugLog();
-			OutputDeltaVelocityData ();
-        }
+		// step2
+		// CIP
+		Calculate_CIP ();
 
-        // step1
-        // 境界条件
-        Calculate_Boundarycondition();
+		// step3
+		// ポアソン
+		Calculate_Poisson ();
 
-        // step2
-        // CIP
-        Calculate_CIP();
+		// step4
+		// 変数アップデート
+		Update_Variables ();
 
-        // step3
-        // ポアソン
-        Calculate_Poisson();
-
-        // step4
-        // 変数アップデート
-        Update_Variables();
-
-        // 描画更新.
-        DrawVelocity();
+		// 描画更新.
+		DrawVelocity ();
 
 		if (currentTime >= OneLoopTimeForSimulation) {
 			endFlag = true;
 			//OutputDeltaVelocityData ();
 		}
 
-		/*
+		/*				
 		// グラフ生成用.
 		if (currentTime >= nextTime){
 			Save_DeltaVelocityData ();
@@ -356,16 +355,24 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		*/
 
 		currentTime += deltaT;
-		TimeText.text = "Time:" + currentTime.ToString("F1");
-    }
+		TimeText.text = "Time:" + currentTime.ToString ("F1");
+	}
 
+	IEnumerator UpdateSimulator(){
+	
+		while (true) {
+			Calcurate ();
+
+			yield return new WaitForSeconds (1);
+		}
+
+	}
     #endregion
 
     #region 流体力学用の関数.
 
     private void InitPhysicsRooms(RoomInformation roomInformation)
     {
-
         rooms = roomInformation.physicsRooms;
 
         ROOM_MAX_X = roomInformation.ROOM_MAX_X;
@@ -374,6 +381,9 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
         // 速度点は(部屋の数+1)個存在する.
         NX = ROOM_MAX_X + 1;
         NY = ROOM_MAX_Y + 1;
+
+		DX = roomSize / NX;
+		DY = roomSize / NY;
 
         // 部屋のタイプリストオブジェクトを初期化.
         roomTypes = new RoomType[NX + 1, NY + 1];
@@ -405,7 +415,11 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		// 速度点は(部屋の数+1)個存在する.
 		NX = ROOM_MAX_X + 1;
 		NY = ROOM_MAX_Y + 1;
+		DX = 1.0f / (float)NX;
+		DY = 1.0f / (float)NY;
 
+		Debug.Log ("NX" + NX);
+	
 		// 部屋を生成.
 		for (int Y = 0; Y < ROOM_MAX_Y; Y++)
 		{

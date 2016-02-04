@@ -14,6 +14,8 @@ public class Smoke : MonoBehaviour {
 	public float f_Min;
 
 	private float deltaT;
+	private float deltaX;
+	private float deltaY;
 
 	public Vector2 windSpeed;
 
@@ -38,6 +40,7 @@ public class Smoke : MonoBehaviour {
             {
                 myPhysics.velocity += ((windSpeed - myPhysics.velocity) * k) * deltaT;
 
+				myPhysics.velocity = new Vector2 (myPhysics.velocity.x * deltaX, myPhysics.velocity.y * deltaY);
 
                 currentVelocity = myPhysics.velocity;
             }

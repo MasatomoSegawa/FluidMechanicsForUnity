@@ -115,7 +115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomLevelTextAsset: {fileID: 4900000, guid: 4d353173c998e3a49817ddd696848b45, type: 3}
   roomLevelTextAssetList:
-  - {fileID: 4900000, guid: 4733dd11449661446b4bc6e9aff398d2, type: 3}
+  - {fileID: 4900000, guid: f49e4a693141241e8889d03a39ab051e, type: 3}
   - {fileID: 4900000, guid: 2f4b75f73db11704f902003247feffc8, type: 3}
   - {fileID: 4900000, guid: f49e4a693141241e8889d03a39ab051e, type: 3}
   - {fileID: 4900000, guid: 4d353173c998e3a49817ddd696848b45, type: 3}
@@ -123,20 +123,21 @@ MonoBehaviour:
   ROOM_MAX_Y: 16
   roomPrefab: {fileID: 155242, guid: 32ce65ab3c8da26438fe1acbf42493d4, type: 2}
   wallPrefab: {fileID: 169944, guid: 4194807bf6a9fba4db123714bf8eb110, type: 2}
-  iteration: 10
+  iteration: 100
   DX: 1
   DY: 1
-  Re: 1000
-  deltaT: 0.05
+  Re: 100000
+  deltaT: 0.001
   maxPsi0: 0.02
   minPsi0: -0.1
-  maxOmg0: 20
+  maxOmg0: 1000
   minOmg0: -21
   maxPrs0: 1
   minPrs0: -0.4
   deltaVelocityDataList: []
   roomDataList: []
   OneLoopTimeForSimulation: 350
+  roomSize: 10
   oldSumVelocity: 0
 --- !u!4 &535448922
 Transform:
@@ -161,6 +162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 233ab61092ff749db8eaa8a8447b913d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  velocityScale: 1.5
 --- !u!1 &992558929
 GameObject:
   m_ObjectHideFlags: 0
