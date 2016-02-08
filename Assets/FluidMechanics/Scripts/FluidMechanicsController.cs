@@ -415,8 +415,8 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		// 速度点は(部屋の数+1)個存在する.
 		NX = ROOM_MAX_X + 1;
 		NY = ROOM_MAX_Y + 1;
-		DX = 1.0f / (float)NX;
-		DY = 1.0f / (float)NY;
+		DX = 10.0f / (float)NX;
+		DY = 10.0f / (float)NY;
 
 		Debug.Log ("NX" + NX);
 	

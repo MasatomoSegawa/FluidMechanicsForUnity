@@ -30,21 +30,22 @@ public class Smoke : MonoBehaviour {
 
     }
 
+	public float are;
+
 	void Update(){
 
-        if (!float.IsNaN(myPhysics.velocity.x) && !float.IsNaN(myPhysics.velocity.y))
-        { 
+		if (!float.IsNaN (myPhysics.velocity.x) && !float.IsNaN (myPhysics.velocity.y)) { 
 
-            Vector2 temp = ((windSpeed - myPhysics.velocity) * k);
-            if (!float.IsNaN(temp.x) && !float.IsNaN(temp.y))
-            {
-                myPhysics.velocity += ((windSpeed - myPhysics.velocity) * k) * deltaT;
+			Vector2 temp = ((windSpeed - myPhysics.velocity) * k);
+			if (!float.IsNaN (temp.x) && !float.IsNaN (temp.y)) {
+			
+				//myPhysics.velocity += ((windSpeed - myPhysics.velocity) * k) * deltaT;
+				myPhysics.velocity += ((windSpeed - myPhysics.velocity) * k) * 10.0f;
 
-				myPhysics.velocity = new Vector2 (myPhysics.velocity.x * deltaX, myPhysics.velocity.y * deltaY);
+				currentVelocity = myPhysics.velocity;
+			}
+		}
 
-                currentVelocity = myPhysics.velocity;
-            }
-        }
 	}
 		
 	void LateUpdate(){
@@ -70,19 +71,5 @@ public class Smoke : MonoBehaviour {
 		}
 			
 	}
-
-	/*
-	void OnDrawGizmos(){
-
-
-		Vector2 direction = velocity.normalized;
-		float length = 5.0f;
-
-		//Debug.Log (transform.position + direction * length);
-
-		Gizmos.color = Color.red;
-		Gizmos.DrawLine (transform.position, transform.position + direction * length);
-
-	}*/
-
+		
 }

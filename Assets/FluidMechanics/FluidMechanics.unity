@@ -127,7 +127,7 @@ MonoBehaviour:
   DX: 1
   DY: 1
   Re: 100000
-  deltaT: 0.001
+  deltaT: 0.01
   maxPsi0: 0.02
   minPsi0: -0.1
   maxOmg0: 1000
@@ -287,6 +287,10 @@ Prefab:
     - target: {fileID: 472150, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
       propertyPath: m_RootOrder
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11443676, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
+      propertyPath: k
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
