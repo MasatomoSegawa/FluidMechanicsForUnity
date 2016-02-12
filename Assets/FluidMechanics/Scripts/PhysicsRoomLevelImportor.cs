@@ -35,6 +35,7 @@ public struct InletOutletInitPositions{
 
 }
 
+[SerializeField]
 public enum RoomType{
 	Normal = 0,Wall = 1,InLet = 2, OutLet = 3,
 }
@@ -256,7 +257,7 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 
 		}
 
-		// 置換
+		// Inletに置換
 		for (int i = 0; i < inoutPositions.InletPos.Length; i++) {
 			Vector2Int tmp = inoutPositions.InletPos [i];
 			GameObject roomObject = Instantiate (inLetRoomPrefab);
@@ -274,8 +275,11 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 			rooms [tmp.y].RemoveAt (tmp.x);
 			rooms [tmp.y].Insert (tmp.x, roomObject);
 			Destroy (old);
+
+			roomObject.GetComponent<PhysicsRoom> ().myType = RoomType.InLet;
 		}
 
+		// Outletに置換
 		for (int i = 0; i < inoutPositions.OutletPos.Length; i++) {
 			Vector2Int tmp = inoutPositions.OutletPos [i];
 			GameObject roomObject = Instantiate (outLetRoomPrefab);
@@ -295,6 +299,7 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 			rooms [tmp.y].Insert (tmp.x, roomObject);
 			Destroy(old);
 
+			roomObject.GetComponent<PhysicsRoom> ().myType = RoomType.OutLet;
 		}
 
 		roomInformation.inletPositions = inoutPositions.InletPos;
@@ -435,22 +440,22 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 					roomObject = Instantiate (wallRoomPrefab);
 					break;
 
-				case "I":
-					roomObject = Instantiate (inLetRoomPrefab);
-					break;
-
-				case "O":
-					roomObject = Instantiate (outLetRoomPrefab);
-					break;
-
 				case "L":
-					roomObject = Instantiate (inLetRoomPrefab);
-					roomObject.GetComponent<PhysicsRoom> ().constantVelocity = new Vector2 (1.0f, 0.0f);
+					if (X == 0) {
+						roomObject = Instantiate (outLetRoomPrefab);
+					} else {
+						roomObject = Instantiate (inLetRoomPrefab);
+					}
+					roomObject.GetComponent<PhysicsRoom> ().constantVelocity = new Vector2 (-1.0f, 0.0f);
 					break;
 
 				case "R":
-					roomObject = Instantiate (inLetRoomPrefab);
-					roomObject.GetComponent<PhysicsRoom> ().constantVelocity = new Vector2 (-1.0f, 0.0f);
+					if (X == 0) {
+						roomObject = Instantiate (inLetRoomPrefab);
+					} else {
+						roomObject = Instantiate (outLetRoomPrefab);
+					}
+					roomObject.GetComponent<PhysicsRoom> ().constantVelocity = new Vector2 (1.0f, 0.0f);
 					break;
 
 				case "D":
@@ -462,7 +467,6 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 					roomObject = Instantiate (inLetRoomPrefab);
 					roomObject.GetComponent<PhysicsRoom> ().constantVelocity = new Vector2 (0.0f, 1.0f);
 					break;
-
 
 				case "S":
 					roomObject = Instantiate (safeRoomPrefab);
@@ -502,10 +506,10 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 
 				rooms [Y].Add (roomObject);
 
-
 			}
 
 		}
+
 		return roomInformation;
 	}
 

@@ -19,6 +19,10 @@ public class PhysicsRoom : MonoBehaviour
     public void UpdateVelocity(float VelX, float VelY)
     {
 
+		if (myType == RoomType.Wall) {
+			return;
+		}
+
         velocity = new Vector2(VelX, VelY);
 
 		if (myType == RoomType.Normal)
@@ -76,23 +80,20 @@ public class PhysicsRoom : MonoBehaviour
         //Debug.Log (transform.position + direction * length);
 
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, transform.position + direction * length);
-        Gizmos.DrawCube(transform.position + direction * length, new Vector3(0.3f, 0.3f, 0.0f));
+		Gizmos.DrawLine(transform.position, transform.position + direction * length);
+		Gizmos.DrawCube(transform.position + direction * length, new Vector3(0.3f, 0.3f, 0.0f));
 
-        Gizmos.color = Color.blue;
+		//Gizmos.color = Color.blue;
         // 左
-        Gizmos.DrawLine(transform.position - Vector3.left * 2.935f,
-            transform.position - Vector3.left * 2.935f + Vector3.right * Left * 2.0f);
+		//Gizmos.DrawLine(transform.position - Vector3.left * 2.935f,
+		//   transform.position - Vector3.left * 2.935f + Vector3.right * Left * 2.0f);
         //Gizmos.DrawCube (transform.position + direction * length, new Vector3 (0.3f, 0.3f, 0.0f));
     }
 
     public void UpdateVelocity(float left, float right, float up, float down, float VelX, float VelY)
     {
-
-        Debug.Log("?");
-        Debug.Log(left);
-
-        Left = left;
+	
+		Left = left;
         Right = right;
         Up = up;
         Down = down;

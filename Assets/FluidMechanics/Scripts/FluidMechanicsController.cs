@@ -47,7 +47,8 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 	public GameObject wallPrefab;
 
     // Roomの2次元リスト.
-    private List<List<GameObject>> rooms;
+	[Header("Roomの二次元リスト"),SerializeField]
+	public List<List<GameObject>> rooms;
 
 	// 時間表示用UIText.
 	private Text TimeText;
@@ -72,6 +73,9 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
     [Header("デルタT")]
     public float deltaT = 0.01f;
+
+	[Header("初期圧力")]
+	public float initPressure;
 
     // 圧力.
     private float[,] prs;
@@ -104,7 +108,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
     private float[,] omg;
 
     // 部屋のタイプ.
-    private RoomType[,] roomTypes;
+	public RoomType[,] roomTypes;
 
     private int NX;
     private int NY;
@@ -141,7 +145,6 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 		TimeText = GameObject.Find ("TimeText").GetComponent<Text> ();
 
-		/*
 		PhysicsRoomLevelImportor physicsRoomLevelImportor = GetComponent<PhysicsRoomLevelImportor> ();
 		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation (roomLevelTextAsset.name);
 	
@@ -152,11 +155,10 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		TimeText = GameObject.Find ("TimeText").GetComponent<Text> ();
 
 		nextTime = coolTime + Time.time;
-		*/
 
 		endFlag = false;
 
-		StartCoroutine (StartSimulation());
+		//StartCoroutine (StartSimulation());
     }
 
 	IEnumerator StartSimulation(){
@@ -321,6 +323,10 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		// 境界条件
 		Calculate_Boundarycondition ();
 
+		// 描画更新.
+		DrawVelocity ();
+
+
 		// step2
 		// CIP
 		Calculate_CIP ();
@@ -332,10 +338,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		// step4
 		// 変数アップデート
 		Update_Variables ();
-
-		// 描画更新.
-		DrawVelocity ();
-
+	
 		if (currentTime >= OneLoopTimeForSimulation) {
 			endFlag = true;
 			//OutputDeltaVelocityData ();
@@ -484,15 +487,11 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
             for (int i = 0; i <= NX; i++)
             {
                 //圧力
-                prs[i,j] = 0.0f;
+				prs[i,j] = initPressure;
                 //速度
                 if (roomTypes[i, j] == RoomType.Wall)
                 {
                     velX[i, j] = 0.0f;
-                }
-                else
-                {
-                    //velX[i, j] = 1.0f;//その他はすべて1で初期化
                 }
 
                 velY[i,j] = 0.0f;//すべての速度ｙ成分は0
@@ -529,104 +528,277 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
     private void Calculate_Boundarycondition()
     {
 
-		//Debug.Log("(" + NX + "," + NY + ")");
-		//Debug.Log ("(" + rooms[0].Count + "," + rooms.Count + ")");
-
-		/*
-        // 入出力
-        for (int i = 0; i < NX; i++)
-        {
-            for (int j = 0; j < NY; j++)
-            {
-                if (roomTypes[i, j] == RoomType.InLet || roomTypes[i, j] == RoomType.OutLet)
-                {			
-
-					velX[i,j] = rooms [j] [i].GetComponent<PhysicsRoom> ().constantVelocity.x;
-					//velX[i, j] = 1.0f;
-                    //Debug.Log("(" + i.ToString() + "," + j.ToString() + ")");
-                }
-            }
-		}*/
-
 		for (int i = 0; i < ROOM_MAX_X; i++) {
 			for (int j = 0; j < ROOM_MAX_Y; j++) {
 
-				if (rooms [j] [i].GetComponent<PhysicsRoom> ().myType == RoomType.InLet ||
-					rooms [j] [i].GetComponent<PhysicsRoom> ().myType == RoomType.OutLet) {
+				// InletかOutletだったら速度を固定する.
+				if (rooms [j] [i].GetComponent<PhysicsRoom> ().myType == RoomType.InLet) {
+					velX [i, j] = rooms [j] [i].GetComponent<PhysicsRoom> ().constantVelocity.x;
+				}
+				else if (rooms [j] [i].GetComponent<PhysicsRoom> ().myType == RoomType.OutLet) {
+					velX [i + 1, j] = rooms [j] [i].GetComponent<PhysicsRoom> ().constantVelocity.x;
+				}
 
+
+				// 壁だったら.
+				if (roomTypes [i, j] == RoomType.Wall) {
+				
+					#region X方向
+					// 左側にプラケットが存在していたら.
 					if (i - 1 >= 0) {
-						velX [i - 1, j] = rooms [j] [i].GetComponent<PhysicsRoom> ().constantVelocity.x;
+						// 左側が壁じゃない
+						if (roomTypes [i - 1, j] == RoomType.Normal) {
+						
+							if (1 + 1 < ROOM_MAX_X) {
+								// 右側が壁だったら 
+								if (roomTypes [i + 1, j] == RoomType.Wall) {
+
+									// □(■)■ の時.
+
+									// Left
+									velX [i, j] = 0.0f;
+
+									// Right
+									velX[i + 1, j] = velX[i - 1, j];
+
+								} 
+								// 右側が壁じゃない.
+								else {
+
+									// □(■)□ の時.
+
+									// Left
+									velX [i, j] = 0.0f;
+
+									// Right
+									velX [i + 1, j] = 0.0f;
+								}
+							}
+							// 右側にプラケットが存在しない
+							else {
+
+								// □(■)☓
+
+								// Left
+								velX [i, j] = 0.0f;
+
+								// Right
+								velX[i + 1, j] = velX[i - 1, j];
+
+							}
+						}
+						// 左側が壁
+						else {
+
+							if (1 + 1 < ROOM_MAX_X) {
+								// 右側が壁だったら 
+								if (roomTypes [i + 1, j] == RoomType.Wall) {
+
+									// ■(■)■ の時.
+
+									// Left
+
+									// Right
+
+								} 
+								// 右側が壁じゃない.
+								else {
+
+									// ■(■)□ の時.
+
+									// Left
+									velX[i,j] = velX[i + 2, j];
+
+									// Right
+									velX [i + 1, j] = 0.0f;
+								}
+							} 
+							// 右側にプラケットが存在しない.
+							else {
+
+								// ■(■)☓
+
+								// Left
+
+								// Right
+
+							}
+
+						}
+
 					}
-					if (i + 1 < NX) {
-						velX [i + 1, j] = rooms [j] [i].GetComponent<PhysicsRoom> ().constantVelocity.x;
+					// 左側にプラケットが存在しない.
+					else {
+
+						if (i + 1 < ROOM_MAX_X) {
+
+							// 右側が壁じゃなかったら.  
+							if (roomTypes [i + 1, j] == RoomType.Normal) {
+
+								// ☓(■)□ の時.
+
+								// Left
+								velX[i,j] = velX[i + 2, j];
+
+								// Right
+								velX [i + 1, j] = 0.0f;
+
+							}
+							// 右側が壁だったら. 
+							else if (roomTypes [i + 1, j] == RoomType.Wall) {
+
+								// ☓(■)■ の時.
+
+								// Left
+
+								// Right
+
+							}
+
+						}
+						// どういうことなの・・？
+						else {
+							Debug.LogError ("メッシュおかしい.");
+						}
+
 					}
+					#endregion
+						
+					// 上側が壁じゃない
+					if (j + 1 < ROOM_MAX_Y) {
+						if (roomTypes [i, j + 1] == RoomType.Normal) {
+
+							if (j - 1 >= 0) {
+								// 下側が壁じゃない
+								if (roomTypes [i, j - 1] == RoomType.Normal) {
+									//  □
+									// (■) の時.
+									//  □
+
+									// Up
+									velY [i, j + 1] = 0.0f;
+
+									// Down
+									velY [i, j] = 0.0f;
+
+								} else if (roomTypes [i, j - 1] == RoomType.Wall) {
+									//  □
+									// (■) の時.
+									//  ■
+
+									// Up
+									velY [i, j + 1] = 0.0f;
+
+									// Down
+
+
+								}							
+							}
+							// 下側にプラケットが存在しない.
+							else {
+
+								//  □
+								// (■)
+								//  ☓ の時.
+
+								// Up
+								velY [i, j + 1] = 0.0f;
+
+								// Down
+								velY [i, j] = velY [i, j + 2];
+							}
+
+
+						} 
+						// 上側が壁
+						else if (roomTypes [i, j + 1] == RoomType.Wall) {
+
+							if (j - 1 >= 0) {
+								// 下側が壁じゃない
+								if (roomTypes [i, j - 1] == RoomType.Normal) {
+									//  ■
+									// (■) の時.
+									//  □
+
+									// Up
+
+									// Down
+									velY [i, j] = 0.0f;
+
+								} else if (roomTypes [i, j - 1] == RoomType.Wall) {
+									//  ■
+									// (■) の時.
+									//  ■
+
+									// Up
+
+									// Down
+
+								}							
+							} 
+							// 下側にプラケットが存在しない.
+							else {
+
+								//  ■
+								// (■) の時.
+								//  ☓
+
+								// Up
+
+								// Down
+
+							}
+
+						}				
+					}
+					// 上側にプラケットが存在しない.
+					else {
+
+						if (j - 1 >= 0) {
+
+							// 下側が壁だったら.
+							if (roomTypes [i, j - 1] == RoomType.Wall) {
+
+								//  ☓
+								// (■)
+								//  ■
+
+								// Up
+
+								// Down
+
+							} 
+							// 下側が壁じゃなかったら.
+							else if (roomTypes [i, j - 1] == RoomType.Normal) {
+
+								//  ☓
+								// (■)
+								//  □
+
+								// Up
+								velY [i, j + 1] = velY [i, j - 1];
+
+								// Down
+								velY [i, j] = 0.0f;
+
+							}
+
+						}
+						// どういうことなの・・？
+						else {
+							Debug.LogError ("Meshエラー");
+						}
+
+					}
+
+					if (Input.GetKeyDown (KeyCode.A)) {
+						Debug.Log ("(" + i + "," + j + ")->" + roomTypes [i, j].ToString ());
+					}
+
 				}
 			}
+
 		}
-
-
-        // 上下.
-        for (int i = 0; i <= NX; i++)
-        {
-
-            // ↓についての境界条件
-            velY[i, 0] = velY[i, 2];
-            velY[i, 1] = 0.0f;
-            velX[i, 0] = velX[i, 1];
-
-            // ↑についての境界条件
-            velX[i, NY - 1] = -velX[i, NY - 2];//上境界度を1とする(平均値が1となる)の速
-            velY[i, NY] = -velY[i, NY - 2];
-            velY[i, NY - 1] = 0.0f;
-
-        }
-
-        //左右
-        for (int j = 0; j <= NY; j++)
-        {
-            if (roomTypes[0, j] == RoomType.InLet || roomTypes[0,j] == RoomType.OutLet)
-            {
-                velX[0, j] = 1.0f;
-            }
-            else
-            {
-                velX[0, j] = velX[2, j];
-                velX[1, j] = 0.0f;
-                velY[0, j] = -velY[1, j];
-
-                velX[NX, j] = velX[NX - 2, j];
-                velX[NX - 1, j] = 0.0f;
-                velY[NX - 1, j] = -velY[NX - 2, j];
-            }
-        }
-
-        /*
-          //障害物左右
-  for(j = nY1; j <= nY2; j++)
-  {
-    //左端
-    velX[nX1+1][j] =  velX[nX1-1][j];
-    velX[nX1][j]   =  0.0;
-    velY[nX1][j]   = -velY[nX1-1][j];
-    //右端
-    velX[nX2-1][j] =  velX[nX2+1][j];
-    velX[nX2][j]   =  0.0;
-    velY[nX2-1][j] = -velY[nX2][j];
-  }
-  //障害物上下
-  for(i = nX1; i <= nX2; i++)
-  {
-    //上端
-    velX[i][nY2] = - velX[i][nY2+1];
-    velY[i][nY2-1] = velY[i][nY2+1];
-    velY[i][nY2]   = 0.0;
-    //下端
-    velX[i][nY1+1] = - velX[i][nY1];
-    velY[i][nY1+1] = velY[i][nY1-1];
-    velY[i][nY1]   = 0.0;
-  }
-        */
-
     }
 
     private void Update_Variables()
@@ -698,16 +870,15 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
         // ポアソン方程式の右辺.
         float[,] D = new float[NX + 1, NY + 1];
-        for (int j = 1; j < NY - 1; j++)
-            for (int i = 1; i < NX - 1; i++)
-            {
-                if (roomTypes[i, j] != RoomType.Wall)
-                {
-                    float a = (velX[i + 1, j] - velX[i, j]) / DX;
-                    float b = (velY[i, j + 1] - velY[i, j]) / DY;
-                    D[i, j] = A3 * (a + b) / deltaT;
-                }
-            }
+		for (int j = 1; j < NY - 1; j++) {
+			for (int i = 1; i < NX - 1; i++) {
+				if (roomTypes [i, j] != RoomType.Wall) {
+					float a = (velX [i + 1, j] - velX [i, j]) / DX;
+					float b = (velY [i, j + 1] - velY [i, j]) / DY;
+					D [i, j] = A3 * (a + b) / deltaT;
+				}
+			}
+		}
 
         //反復法
         int cnt = 0;
@@ -732,10 +903,11 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
             {
                 for(int i = 0; i < NX; i++)
                 {
-                    if(roomTypes[i,j] == RoomType.Wall)
-                    {
-                        prs[i, j] = maxPrs0;
-                    }
+					if (roomTypes [i, j] == RoomType.Wall) {
+						prs [i, j] = prs [i, j];
+					} else if (roomTypes [i, j] == RoomType.InLet || roomTypes [i, j] == RoomType.OutLet) {
+						prs [i, j] = initPressure;
+					}
                 }
             }
 
@@ -899,6 +1071,13 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 				PhysicsRoom currentRoom = rooms[Y][X].GetComponent<PhysicsRoom>();
 
 				currentRoom.UpdateVelocity (VelX [X,Y], VelY [X,Y]);
+
+				currentRoom.Left = velX [X, Y];
+				currentRoom.Right = velX [X + 1, Y];
+				currentRoom.Up = velY [X, Y + 1];
+				currentRoom.Down = velY [X, Y];
+
+				currentRoom.presser = prs [X, Y];
             }
         }
 
