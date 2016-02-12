@@ -129,6 +129,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 	private float nextTime;
 	private bool endFlag = false;
 	private float loopTimeMax = 100.0f;
+	private float deltaCurrentTime = 0.0f;
 
 	public float OneLoopTimeForSimulation = 10.0f;
 
@@ -145,12 +146,24 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 		TimeText = GameObject.Find ("TimeText").GetComponent<Text> ();
 
+		//StartOneFluidRoom ();
+
+		//StartCoroutine (StartSimulation());
+		StartSaveDeltaVelocity ();
+	}
+
+	void StartSaveDeltaVelocity(){
+		StartCoroutine (StartDeltavelocitySimulation ());
+	}
+
+	void StartOneFluidRoom(){
+
 		PhysicsRoomLevelImportor physicsRoomLevelImportor = GetComponent<PhysicsRoomLevelImportor> ();
 		RoomInformation roomInformation = physicsRoomLevelImportor.GetRoomInformation (roomLevelTextAsset.name);
-	
+
 		InitPhysicsRooms (roomInformation);
 
-        InitData();
+		InitData();
 
 		TimeText = GameObject.Find ("TimeText").GetComponent<Text> ();
 
@@ -158,8 +171,36 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 		endFlag = false;
 
-		//StartCoroutine (StartSimulation());
-    }
+	}
+		
+	IEnumerator StartDeltavelocitySimulation(){
+
+		PhysicsRoomLevelImportor physicsRoomLevelImportor = GetComponent<PhysicsRoomLevelImportor> ();
+
+		foreach (TextAsset textAsset in roomLevelTextAssetList) {
+			RoomInformation currentRoomInformation = physicsRoomLevelImportor.GetRoomInformation (textAsset.name);
+
+			deltaVelocityDataList = new List<DeltaVelocityData> ();
+
+			InitPhysicsRooms (currentRoomInformation);
+
+			InitData ();
+
+			yield return new WaitWhile (() => endFlag == false);
+
+			OutputDeltaVelocityData (textAsset);
+
+			yield return new WaitForSeconds (5.0f);
+
+			endFlag = false;
+			nextTime = Time.time + coolTime;
+			deltaCurrentTime = Time.time;
+
+		}
+
+		yield break;
+
+	}
 
 	IEnumerator StartSimulation(){
 
@@ -176,37 +217,37 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 			RoomInformation currentRoomInformation = initRoomInformation;
 			// ルームのInLet/Outletの全てのパターンを試して,
 			// タバコの粒子の煙が少ないパターンを得る.
-			for (int InLet = 1; InLet < initRoomInformation.ROOM_MAX_Y - 1; InLet++) {
-				for (int OutLet = 1; OutLet < initRoomInformation.ROOM_MAX_Y - 1; OutLet++) {
-					currentRoomInformation = 
-						physicsRoomLevelImportor.Get_Random_OutletInlet_RoomInformation (textAsset.name,initRoomInformation, OutLet, InLet);
+			for (int Y = 1; Y < initRoomInformation.ROOM_MAX_Y - 1; Y++) {
+				//for (int OutLet = 1; OutLet < initRoomInformation.ROOM_MAX_Y - 1; OutLet++) {
+				currentRoomInformation = 
+					physicsRoomLevelImportor.Get_Random_OutletInlet_RoomInformation (textAsset.name, initRoomInformation, Y, Y);
 
-					InitPhysicsRooms (currentRoomInformation);
+				InitPhysicsRooms (currentRoomInformation);
 
-					InitData ();
+				InitData ();
 
-					// シミュレーションの更新開始.
-					//StartCoroutine (UpdateSimulator ());
+				// シミュレーションの更新開始.
+				//StartCoroutine (UpdateSimulator ());
 
-					yield return new WaitWhile (() => endFlag == false);
+				yield return new WaitWhile (() => endFlag == false);
 
-					//StopCoroutine (UpdateSimulator ());
+				//StopCoroutine (UpdateSimulator ());
 
-					endFlag = false;
+				endFlag = false;
 
-					//一度終わる毎にRoomDataにデータを追加.
-					RoomData newRoomData = new RoomData ();
-					newRoomData.InLetNumber = InLet;
-					newRoomData.OutLetNumber = OutLet;
-					newRoomData.ParticleNumber = GetSmokeNumberInSafeAria ();
-					newRoomData.InPositions = currentRoomInformation.inletPositions;
-					newRoomData.OutPositions = currentRoomInformation.outletPostions;
-                    newRoomData.ParticleNumberInAll = GetSmokeNmber();
+				//一度終わる毎にRoomDataにデータを追加.
+				RoomData newRoomData = new RoomData ();
+				newRoomData.InLetNumber = Y;
+				newRoomData.OutLetNumber = Y;
+				newRoomData.ParticleNumber = GetSmokeNumberInSafeAria ();
+				newRoomData.InPositions = currentRoomInformation.inletPositions;
+				newRoomData.OutPositions = currentRoomInformation.outletPostions;
+				newRoomData.ParticleNumberInAll = GetSmokeNmber ();
 
-					roomDataList.Add (newRoomData);
-					//OutPutSmokeData (currentRoomInformation);
+				roomDataList.Add (newRoomData);
+				//OutPutSmokeData (currentRoomInformation);
 
-				}
+				//}
 			}
 
 			OutPutSmokeData (currentRoomInformation, textAsset.name);
@@ -286,18 +327,23 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		sw.Close();
 
 	}
-				
-	private void OutputDeltaVelocityData(){
+					
+	/// <summary>
+	/// 風の落ち着き具合のデータを出力するメソッド.
+	/// </summary>
+	private void OutputDeltaVelocityData(TextAsset textAsset){
 
 		StreamWriter sw;
 		FileInfo fi;
-		fi = new FileInfo(Application.dataPath + "/Data/" + roomLevelTextAsset.name + "_DeltaVelocityData.csv");
+		fi = new FileInfo(Application.dataPath + "/Data/" + textAsset.name + "_DeltaVelocityData.csv");
 		sw = fi.AppendText();
 
         Debug.Log(Application.dataPath + "/DeltaVelocity.csv");
 
-        sw.WriteLine(roomLevelTextAsset.text);
+		sw.WriteLine(textAsset.text);
         sw.WriteLine("Time , DeltaVelocity");
+
+		print (deltaVelocityDataList.Count);
 
         int max = deltaVelocityDataList.Count;
         int count =0;
@@ -305,27 +351,30 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 			string str = data.timeStamp.ToString () + "," + data.absVelocity.ToString();
 			sw.WriteLine (str);
             Debug.Log((++count).ToString() + "/" + max.ToString());
-            Debug.Log(str);
 		}
-        Debug.Log("OutputComplete");
+		Debug.Log(textAsset.name + " Complete");
 			
 		sw.Flush();
 		sw.Close();
 
+		endFlag = false;
 	}
 
 	void Update(){
-		Calcurate ();
+
+		if (endFlag == false) {
+			Calculate ();
+		}
 	}
 
-	void Calcurate(){
+	void Calculate(){
+	
 		// step1
 		// 境界条件
 		Calculate_Boundarycondition ();
 
 		// 描画更新.
 		DrawVelocity ();
-
 
 		// step2
 		// CIP
@@ -338,33 +387,25 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		// step4
 		// 変数アップデート
 		Update_Variables ();
-	
-		if (currentTime >= OneLoopTimeForSimulation) {
+
+		if (currentTime >= OneLoopTimeForSimulation && endFlag == false) {
 			endFlag = true;
-			//OutputDeltaVelocityData ();
 		}
 
-		/*				
-		// グラフ生成用.
-		if (currentTime >= nextTime){
+		if (Time.time >= nextTime) {
+			nextTime = Time.time + coolTime;
 			Save_DeltaVelocityData ();
-			nextTime = currentTime + coolTime;
 		}
-
-		if (currentTime >= 500.0f) {
-			endFlag = true;
-			OutputDeltaVelocityData ();
-		}
-		*/
-
+						
 		currentTime += deltaT;
-		TimeText.text = "Time:" + currentTime.ToString ("F1");
+		deltaCurrentTime += deltaT;
+		TimeText.text = "Time:" + currentTime.ToString ("F2");
 	}
 
 	IEnumerator UpdateSimulator(){
 	
 		while (true) {
-			Calcurate ();
+			Calculate ();
 
 			yield return new WaitForSeconds (1);
 		}
@@ -516,6 +557,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
         }
 
 		currentTime = 0.0f;
+
     }
 
     #endregion
@@ -790,10 +832,10 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 						}
 
 					}
-
+					/*
 					if (Input.GetKeyDown (KeyCode.A)) {
 						Debug.Log ("(" + i + "," + j + ")->" + roomTypes [i, j].ToString ());
-					}
+					}*/
 
 				}
 			}
@@ -1059,6 +1101,8 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		currentDeltaVelocityData.timeStamp = (int)currentTime;
 
 		deltaVelocityDataList.Add (currentDeltaVelocityData);
+
+		print ("Save!!");
 	}
 		
     private void DrawVelocity()

@@ -422,6 +422,10 @@ public class PhysicsRoomLevelImportor : MonoBehaviour {
 		roomInformation.ROOM_MAX_Y = ROOM_MAX_Y;
 		roomInformation.physicsRooms = rooms;
 
+		for (int i = 0; i < FluidMechanicsController.Instance.gameObject.transform.childCount; i++) {
+			Destroy (FluidMechanicsController.Instance.gameObject.transform.GetChild(i).gameObject);
+		}
+
 		for(int Y = 0; Y < ROOM_MAX_Y; Y++){
 
 			rooms.Add (new List<GameObject> ());
