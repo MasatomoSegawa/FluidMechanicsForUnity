@@ -146,10 +146,10 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 		TimeText = GameObject.Find ("TimeText").GetComponent<Text> ();
 
-		//StartOneFluidRoom ();
+		StartOneFluidRoom ();
 
 		//StartCoroutine (StartSimulation());
-		StartSaveDeltaVelocity ();
+		//StartSaveDeltaVelocity ();
 	}
 
 	void StartSaveDeltaVelocity(){
