@@ -138,7 +138,7 @@ MonoBehaviour:
   minPrs0: -0.4
   deltaVelocityDataList: []
   roomDataList: []
-  OneLoopTimeForSimulation: 0.2
+  OneLoopTimeForSimulation: 500
   roomSize: 10
   oldSumVelocity: 0
 --- !u!4 &535448922
