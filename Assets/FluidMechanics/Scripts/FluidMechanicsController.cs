@@ -146,10 +146,11 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 		TimeText = GameObject.Find ("TimeText").GetComponent<Text> ();
 
-		StartOneFluidRoom ();
+		//StartOneFluidRoom ();
 
 		//StartCoroutine (StartSimulation());
 		//StartSaveDeltaVelocity ();
+		StartSaveDeltaVelocity();
 	}
 
 	void StartSaveDeltaVelocity(){
@@ -1073,6 +1074,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
     }
 
 	public float oldSumVelocity;
+	private int nextStep = 0;
 
 	/// <summary>
 	/// 各ポイントの速度の総和の絶対値保存する
@@ -1098,7 +1100,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 
 		DeltaVelocityData currentDeltaVelocityData = new DeltaVelocityData ();
 		currentDeltaVelocityData.absVelocity = deltaVelocity;
-		currentDeltaVelocityData.timeStamp = (int)currentTime;
+		currentDeltaVelocityData.timeStamp = nextStep++;
 
 		deltaVelocityDataList.Add (currentDeltaVelocityData);
 
