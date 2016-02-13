@@ -255,10 +255,10 @@ MonoBehaviour:
   extractRangeTheta: 360
   initSmokeOfSpeed: 0.5
   smoke: {fileID: 119406, guid: f94eff81f18170c43bb64f1cee226138, type: 2}
-  extractDuration: 10000
+  extractDuration: 0.5
   isExtractSmoke: 1
   nextTime: 0
-  maxExtractNumber: 0
+  maxExtractNumber: 200
   currentExtractedNumber: 0
 --- !u!212 &21209036
 SpriteRenderer:
@@ -491,11 +491,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: maxExtractNumber
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: extractDuration
-      value: 10000
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Enabled
@@ -503,6 +503,14 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: isExtractSmoke
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: nextTime
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

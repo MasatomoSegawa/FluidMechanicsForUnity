@@ -147,10 +147,8 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		TimeText = GameObject.Find ("TimeText").GetComponent<Text> ();
 
 		//StartOneFluidRoom ();
-
-		//StartCoroutine (StartSimulation());
-		//StartSaveDeltaVelocity ();
-		StartSaveDeltaVelocity();
+		//StartSaveDeltaVelocity();
+		StartCoroutine (StartSimulation());
 	}
 
 	void StartSaveDeltaVelocity(){
@@ -196,6 +194,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 			endFlag = false;
 			nextTime = Time.time + coolTime;
 			deltaCurrentTime = Time.time;
+			nextStep = 0;
 
 		}
 
@@ -306,16 +305,16 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 		int count = 0;
 		foreach (RoomData data in roomDataList) {
 			string str = data.InLetNumber.ToString () + "," + data.OutLetNumber.ToString() + 
-			             "," + data.ParticleNumber.ToString() + "," + data.ParticleNumberInAll.ToString();
+			             "," + data.ParticleNumber.ToString() + "," + data.ParticleNumberInAll.ToString() + ",";
 
 			for (int i = 0; i < data.InLetNumber; i++) {
-				str += "(" + data.InPositions [i].x + "," + data.InPositions [i].y + ") - ";
+				str += "Inlet(" + data.InPositions [i].x + " . " + data.InPositions [i].y + "),";
 			}
 
 			str += ",";
 
 			for (int i = 0; i < data.OutLetNumber; i++) {
-				str += "(" + data.OutPositions [i].x + "," + data.OutPositions [i].y + ") - ";
+				str += "Outlet(" + data.OutPositions [i].x + " . " + data.OutPositions [i].y + "), ";
 			}
 						
 			sw.WriteLine (str);
@@ -393,10 +392,11 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
 			endFlag = true;
 		}
 
+		/*
 		if (Time.time >= nextTime) {
 			nextTime = Time.time + coolTime;
 			Save_DeltaVelocityData ();
-		}
+		}*/
 						
 		currentTime += deltaT;
 		deltaCurrentTime += deltaT;
@@ -554,7 +554,7 @@ public class FluidMechanicsController : Singleton<FluidMechanicsController>
         if (tabaccoObject != null)
         {
             tabaccoObject.GetComponent<Tabacco>().StartExtractSmoke();
-			//Debug.Log("uhun");
+			Debug.Log("uhun");
         }
 
 		currentTime = 0.0f;

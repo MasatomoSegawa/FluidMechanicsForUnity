@@ -37,7 +37,6 @@ public class Tabacco : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		// Debug.Log(isExtractSmoke);
 		if (isExtractSmoke == true && nextTime + extractDuration <= Time.time && currentExtractedNumber < maxExtractNumber) {
 			nextTime = Time.time + extractDuration;
 			ExtractSmoke ();
