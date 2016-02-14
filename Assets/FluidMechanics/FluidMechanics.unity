@@ -115,9 +115,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomLevelTextAsset: {fileID: 4900000, guid: f49e4a693141241e8889d03a39ab051e, type: 3}
   roomLevelTextAssetList:
-  - {fileID: 4900000, guid: f3526ed9f95ade84791121320b198265, type: 3}
-  - {fileID: 4900000, guid: c8530d58659fe4746bb38eef09ce7264, type: 3}
-  - {fileID: 4900000, guid: b5cc6cc1e60d9984e8987e75c021dba4, type: 3}
+  - {fileID: 4900000, guid: f49e4a693141241e8889d03a39ab051e, type: 3}
+  - {fileID: 4900000, guid: 55761cdc12d00fa48a6b53b730f5f782, type: 3}
+  - {fileID: 4900000, guid: 4733dd11449661446b4bc6e9aff398d2, type: 3}
+  - {fileID: 4900000, guid: 4d353173c998e3a49817ddd696848b45, type: 3}
+  - {fileID: 4900000, guid: 2f4b75f73db11704f902003247feffc8, type: 3}
   ROOM_MAX_X: 16
   ROOM_MAX_Y: 16
   roomPrefab: {fileID: 155242, guid: 32ce65ab3c8da26438fe1acbf42493d4, type: 2}
